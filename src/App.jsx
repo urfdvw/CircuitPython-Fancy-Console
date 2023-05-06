@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import ScrollableFeed from 'react-scrollable-feed'
+// https://stackoverflow.com/a/52673227/7037749
 
 const SerialConsole = () => {
     const [port, setPort] = useState(null);
@@ -87,8 +89,10 @@ const SerialConsole = () => {
             ) : (
                 <button onClick={connect}>Connect</button>
             )}
-            <div>
-                <pre>{output}</pre>
+            <div style={{ "max-height": '100pt'}}>
+                <ScrollableFeed> 
+                    <pre>{output}</pre>
+                </ScrollableFeed>
             </div>
             {port && (
                 <form onSubmit={handleSubmit}>
