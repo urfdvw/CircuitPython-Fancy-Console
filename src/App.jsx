@@ -56,7 +56,7 @@ const SerialConsole = () => {
         if (!port || !port.writable) return;
 
         const writer = port.writable.getWriter();
-        const encodedData = new TextEncoder().encode(data + '\x0D');
+        const encodedData = new TextEncoder().encode(data);
 
         try {
             await writer.write(encodedData);
@@ -77,7 +77,7 @@ const SerialConsole = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        sendData(input);
+        sendData(input + '\x0D');
         setInput('');
     };
 
@@ -89,7 +89,7 @@ const SerialConsole = () => {
             ) : (
                 <button onClick={connect}>Connect</button>
             )}
-            <div style={{ "max-height": '100pt'}}>
+            <div style={{ "max-height": '350pt'}}>
                 <ScrollableFeed> 
                     <pre>{output}</pre>
                 </ScrollableFeed>
@@ -104,6 +104,12 @@ const SerialConsole = () => {
                     <button type="submit">Send</button>
                 </form>
             )}
+            <button
+                onClick={()=>{sendData("\x03")}}
+            >Ctrl-C</button>
+            <button
+                onClick={()=>{sendData("\x04")}}
+            >Ctrl-D</button>
         </div>
     );
 };
