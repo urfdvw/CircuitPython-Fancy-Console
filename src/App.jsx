@@ -24,7 +24,7 @@ const SerialConsole = () => {
                     while (true) {
                         const { value, done } = await reader.read();
                         if (done) break;
-                        setOutput((prevOutput) => prevOutput + new TextDecoder().decode(value));
+                        setOutput((prevOutput) => prevOutput.slice(-100000) + new TextDecoder().decode(value));
                     }
                 } catch (err) {
                     console.error('Failed to read data:', err);
