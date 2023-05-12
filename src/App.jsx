@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import Button from '@mui/material/Button';
+import TextField from '@mui/material/TextField';
 import ScrollableFeed from 'react-scrollable-feed'
 // https://stackoverflow.com/a/52673227/7037749
 
@@ -85,31 +87,34 @@ const SerialConsole = () => {
         <div>
             <h2>Serial Console</h2>
             {port ? (
-                <button onClick={disconnect}>Disconnect</button>
+                <Button variant="contained" onClick={disconnect}>Disconnect</Button>
             ) : (
-                <button onClick={connect}>Connect</button>
+                <Button variant="contained" onClick={connect}>Connect</Button>
             )}
-            <div style={{ "max-height": '350pt'}}>
-                <ScrollableFeed> 
+            <div style={{ "max-height": '350pt' }}>
+                <ScrollableFeed>
                     <pre>{output}</pre>
                 </ScrollableFeed>
             </div>
             {port && (
-                <form onSubmit={handleSubmit}>
-                    <input
-                        type="text"
-                        value={input}
-                        onChange={(e) => setInput(e.target.value)}
-                    />
-                    <button type="submit">Send</button>
-                </form>
+                <>
+                    <form onSubmit={handleSubmit}>
+                        <TextField
+                            variant="standard"
+                            type="text"
+                            value={input}
+                            onChange={(e) => setInput(e.target.value)}
+                        />
+                        <Button variant="contained" type="submit">Send</Button>
+                    </form>
+                    <Button variant="contained"
+                        onClick={() => { sendData("\x03") }}
+                    >Ctrl-C</Button>
+                    <Button variant="contained"
+                        onClick={() => { sendData("\x04") }}
+                    >Ctrl-D</Button>
+                </>
             )}
-            <button
-                onClick={()=>{sendData("\x03")}}
-            >Ctrl-C</button>
-            <button
-                onClick={()=>{sendData("\x04")}}
-            >Ctrl-D</button>
         </div>
     );
 };
