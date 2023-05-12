@@ -47,7 +47,7 @@ const SerialConsole = () => {
     const connect = async () => {
         try {
             const newPort = await navigator.serial.requestPort();
-            await newPort.open({ baudRate: 9600 });
+            await newPort.open({ baudRate: 115200 });
             setPort(newPort);
         } catch (err) {
             console.error('Failed to connect:', err);
