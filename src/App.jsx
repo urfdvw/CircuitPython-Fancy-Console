@@ -22,7 +22,7 @@ const removeTitle = (text) => {
 }
 
 const aggregateConnectedVariable = (text) => {
-    
+
     if (!(text.includes(CV_JSON_START) && text.includes(CV_JSON_END))) {
         return {};
     }
@@ -31,7 +31,7 @@ const aggregateConnectedVariable = (text) => {
         JSON.parse(x.split(CV_JSON_END).at(0))
     ).reduce(
         (accumulator, currentValue) => {
-            return {...accumulator, ...currentValue};
+            return { ...accumulator, ...currentValue };
         }, {}
     );
 }
@@ -40,7 +40,7 @@ const App = () => {
 
     const { connect, disconnect, sendData, output, connected } = useSerial();
     const [input, setInput] = useState('');
-    const [ConnectedVariables, setConnectedVariables] = useState({});
+    const [connectedVariables, setConnectedVariables] = useState({});
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -50,8 +50,7 @@ const App = () => {
 
     useEffect(() => {
         setConnectedVariables(
-            cur_cv =>
-            {
+            cur_cv => {
                 return {
                     ...cur_cv,
                     ...aggregateConnectedVariable(output)
@@ -92,10 +91,59 @@ const App = () => {
                     >Ctrl-D</Button>
                 </>
             )}
-            <p>a: {ConnectedVariables.a}</p>
-            <p>b: {ConnectedVariables.b}</p>
+            <p>a: {connectedVariables.a}</p>
+            <p>b: {connectedVariables.b}</p>
+            <VariableDisp
+                connectedVariables={connectedVariables}
+                variableName='a'
+                displayName='Variable named a'
+            />
+            <VariableSetInt
+                setConnectedVariables={setConnectedVariables}
+                variableName='a'
+                displayName='Variable named a'
+                sendData={sendData}
+            />
         </div>
     );
 };
+
+const VariableDisp = ({ connectedVariables, variableName, displayName }) => {
+    return (
+        <>
+            <p><b>{displayName}:</b></p>
+            <p>{connectedVariables[variableName]}</p>
+        </>
+    )
+}
+
+const VariableSetInt = ({ setConnectedVariables, variableName, displayName, sendData }) => {
+    const [value, setValue] = useState(0);
+
+    const handleSubmit = (event) => {
+        event.preventDefault()
+        const updatedVariable = { [variableName]: parseInt(value) } //https://stackoverflow.com/a/29077216/7037749
+        sendData(JSON.stringify(updatedVariable) + LINE_END);
+        setConnectedVariables(cur => {
+            return {
+                ...cur,
+                ...updatedVariable,
+            }
+        })
+    }
+
+    return (
+        <>
+            <p>{displayName}</p>
+            <form onSubmit={handleSubmit}>
+                <input value={value} onChange={event => {
+                    setValue(event.target.value)
+                }}></input>
+
+            </form>
+        </>
+    )
+}
+
 
 export default App;
