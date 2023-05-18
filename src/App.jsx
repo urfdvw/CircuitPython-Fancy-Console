@@ -95,17 +95,15 @@ const App = () => {
                     >Ctrl-D</Button>
                 </>
             )}
-            <p>a: {connectedVariables.a}</p>
-            <p>b: {connectedVariables.b}</p>
             <VariableDisp
                 connectedVariables={connectedVariables}
                 variableName='a'
-                displayName='Variable named a'
+                displayName='Value of `a` in CircuitPython'
             />
             <VariableSetInt
                 setConnectedVariables={setConnectedVariables}
                 variableName='a'
-                displayName='Variable named a'
+                displayName='Change `a` to'
                 sendData={sendData}
             />
         </div>
@@ -143,7 +141,7 @@ const VariableSetInt = ({ setConnectedVariables, variableName, displayName, send
                 <input value={value} onChange={event => {
                     setValue(event.target.value)
                 }}></input>
-
+                <button>Set</button>
             </form>
         </>
     )
