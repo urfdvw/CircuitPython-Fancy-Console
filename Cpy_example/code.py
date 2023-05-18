@@ -89,7 +89,7 @@ class ConnectedVariablesManager:
         updates_dict = {name: value for name, value in zip(var_names, var_values)}
         self.vars.update(updates_dict)
         if self.debug:
-            print(CV_JSON_START + json.dumps(updates_dict) + CV_JSON_END)
+            print(CV_JSON_START + json.dumps(updates_dict) + CV_JSON_END, end='')
 
 
 cv = ConnectedVariablesManager()
@@ -97,10 +97,11 @@ cv.define("a", 1)
 cv.define("b", 1.0)
 cv.write("a", 10)
 cv.write(["a", "b"], [100, 0.1])
+print(cv.read("a"))
+print(cv.read(["a", "b"]))
 
 while True:
     cv.write("a", cv.read("a") + 1)
-    print(cv.read("a"))
     print(cv.read(["a", "b"]))
     time.sleep(1)
 # {"a": 2}

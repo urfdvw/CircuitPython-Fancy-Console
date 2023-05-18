@@ -21,6 +21,10 @@ const removeTitle = (text) => {
     return text.split(TITLE_START).map(x => x.split(TITLE_END).at(1)).join('')
 }
 
+const removeCV = (text) => {
+    return text.split(CV_JSON_START).map(x => x.split(CV_JSON_END).at(1)).join('')
+}
+
 const aggregateConnectedVariable = (text) => {
 
     if (!(text.includes(CV_JSON_START) && text.includes(CV_JSON_END))) {
@@ -69,7 +73,7 @@ const App = () => {
             )}
             <div style={{ "maxHeight": '350pt' }}>
                 <ScrollableFeed>
-                    <pre>{removeTitle(output)}</pre>
+                    <pre>{removeTitle(removeCV(output))}</pre>
                 </ScrollableFeed>
             </div>
             {connected && (
