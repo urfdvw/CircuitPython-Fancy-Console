@@ -10,6 +10,8 @@ const TITLE_END = '\x1B\\';
 const CTRL_C = "\x03";
 const CTRL_D = "\x04";
 const LINE_END = '\x0D';
+const CV_JSON_START = '<CV>'; // ConnectedVariableJson start
+const CV_JSON_END = '</CV>';
 
 const latestTitle = (text) => {
     return text.split(TITLE_START).at(-1).split(TITLE_END).at(0);
@@ -19,16 +21,45 @@ const removeTitle = (text) => {
     return text.split(TITLE_START).map(x => x.split(TITLE_END).at(1)).join('')
 }
 
+const aggregateConnectedVariable = (text) => {
+    
+    if (!(text.includes(CV_JSON_START) && text.includes(CV_JSON_END))) {
+        return {};
+    }
+
+    return text.split(CV_JSON_START).slice(1).map(x =>
+        JSON.parse(x.split(CV_JSON_END).at(0))
+    ).reduce(
+        (accumulator, currentValue) => {
+            return {...accumulator, ...currentValue};
+        }, {}
+    );
+}
+
 const App = () => {
 
     const { connect, disconnect, sendData, output, connected } = useSerial();
     const [input, setInput] = useState('');
+    const [ConnectedVariables, setConnectedVariables] = useState({});
 
     const handleSubmit = (e) => {
         e.preventDefault();
         sendData(input + LINE_END);
         setInput('');
     };
+
+    useEffect(() => {
+        setConnectedVariables(
+            cur_cv =>
+            {
+                return {
+                    ...cur_cv,
+                    ...aggregateConnectedVariable(output)
+                };
+            }
+        );
+    }, [output])
+
 
     return (
         <div>
@@ -37,7 +68,7 @@ const App = () => {
             {!connected && (
                 <Button variant="contained" onClick={connect}>Connect</Button>
             )}
-            <div style={{ "max-height": '350pt' }}>
+            <div style={{ "maxHeight": '350pt' }}>
                 <ScrollableFeed>
                     <pre>{removeTitle(output)}</pre>
                 </ScrollableFeed>
@@ -61,6 +92,8 @@ const App = () => {
                     >Ctrl-D</Button>
                 </>
             )}
+            <p>a: {ConnectedVariables.a}</p>
+            <p>b: {ConnectedVariables.b}</p>
         </div>
     );
 };
