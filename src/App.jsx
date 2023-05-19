@@ -20,12 +20,12 @@ const latestTitle = (text) => {
     return text.split(TITLE_START).at(-1).split(TITLE_END).at(0);
 }
 
-const removeTitle = (text) => {
-    return text.split(TITLE_START).map(x => x.split(TITLE_END).at(1)).join('')
-}
-
-const removeCV = (text) => {
-    return text.split(CV_JSON_START).map(x => x.split(CV_JSON_END).at(1)).join('')
+const removeInBetween = (text, start, end) => {
+    if (text.includes(end)) {
+        return text.split(start).map(x => x.split(end).at(1)).join('');
+    } else {
+        return text.split(start)[0];
+    }
 }
 
 const aggregateConnectedVariable = (text) => {
@@ -114,7 +114,15 @@ const App = () => {
             )}
             <div style={{ "maxHeight": '350pt' }}>
                 <ScrollableFeed>
-                    <pre>{removeTitle(removeCV(output))}</pre>
+                    <pre>{
+                        removeInBetween(
+                            removeInBetween(
+                                output,
+                                TITLE_START, TITLE_END
+                            ),
+                            CV_JSON_START, CV_JSON_END
+                        )
+                    }</pre>
                 </ScrollableFeed>
             </div>
             {connected && (
