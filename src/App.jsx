@@ -7,6 +7,7 @@ import ScrollableFeed from 'react-scrollable-feed'
 import NewWindow from "react-new-window";
 
 import useSerial from "./useSerial";
+import { VariableDisp, CreateVariableDisp } from "./VariableDisp";
 
 const TITLE_START = '\x1B]0;';
 const TITLE_END = '\x1B\\';
@@ -104,6 +105,8 @@ const App = () => {
     const unwindow = (key) => {
         setWindowed(key, false);
     }
+    // add widget test
+    const [open, setOpen] = React.useState(true);
 
     return (
         <div>
@@ -182,18 +185,12 @@ const App = () => {
                     )
                 }
             })}
+            <CreateVariableDisp open={open} setOpen={setOpen} setWidgets={setWidgets} />
         </div>
     );
 };
 
-const VariableDisp = ({ connectedVariables, variableName, displayName }) => {
-    return (
-        <>
-            <b>{displayName}:</b>
-            {connectedVariables[variableName]}
-        </>
-    )
-}
+
 
 const VariableSetInt = ({ setConnectedVariables, variableName, displayName, sendData }) => {
     const [value, setValue] = useState(0);
