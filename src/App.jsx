@@ -4,6 +4,8 @@ import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import ScrollableFeed from 'react-scrollable-feed'
 // https://stackoverflow.com/a/52673227/7037749
+import NewWindow from "react-new-window";
+
 import useSerial from "./useSerial";
 
 const TITLE_START = '\x1B]0;';
@@ -48,14 +50,18 @@ const App = () => {
     const [connectedVariables, setConnectedVariables] = useState({});
     const [widgets, setWidgets] = useState([
         {
+            "key": "sdkfjwdkjfhsadkjfh",
             "type": "VariableDisp",
             "variableName": "a",
-            "displayName": "Value of `a` in CircuitPython"
+            "displayName": "Value of `a` in CircuitPython",
+            "windowed": false
         },
         {
+            "key": "fkjvhgifvbhgsjd",
             "type": "VariableSetInt",
             "variableName": "a",
-            "displayName": "Change `a` to"
+            "displayName": "Change `a` to",
+            "windowed": false
         }
     ])
 
@@ -84,6 +90,20 @@ const App = () => {
         padding: '10px',
         borderRadius: '16px',
     };
+
+    const setWindowed = (key, value) => {
+        setWidgets(cur => cur.map(
+            wid => (wid.key === key) ? { ...wid, "windowed": value } : wid
+        ));
+    }
+
+    const enwindow = (key) => {
+        setWindowed(key, true);
+    }
+
+    const unwindow = (key) => {
+        setWindowed(key, false);
+    }
 
     return (
         <div>
@@ -136,11 +156,23 @@ const App = () => {
                         />
                     )
                 }
-                return (
-                    <Box sx={widgetStyles}>
-                        {content}
-                    </Box>
-                )
+                if (wid.windowed) {
+                    return (
+                        <NewWindow onUnload={
+                            () => { unwindow(wid.key) }
+                        }>{content}</NewWindow>
+                    )
+                } else {
+                    return (
+                        <Box sx={widgetStyles}>
+                            <button onClick={
+                                () => { enwindow(wid.key) }
+                            }>Float to Window</button>
+                            <br />
+                            {content}
+                        </Box>
+                    )
+                }
             })}
         </div>
     );
