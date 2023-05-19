@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Button from '@mui/material/Button';
+import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import ScrollableFeed from 'react-scrollable-feed'
 // https://stackoverflow.com/a/52673227/7037749
@@ -45,6 +46,18 @@ const App = () => {
     const { connect, disconnect, sendData, output, connected } = useSerial();
     const [input, setInput] = useState('');
     const [connectedVariables, setConnectedVariables] = useState({});
+    const [widgets, setWidgets] = useState([
+        {
+            "type": "VariableDisp",
+            "variableName": "a",
+            "displayName": "Value of `a` in CircuitPython"
+        },
+        {
+            "type": "VariableSetInt",
+            "variableName": "a",
+            "displayName": "Change `a` to"
+        }
+    ])
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -63,6 +76,14 @@ const App = () => {
         );
     }, [output])
 
+    const widgetStyles = {
+        bgcolor: 'background.paper',
+        borderColor: 'text.primary',
+        m: 1,
+        border: 1,
+        padding: '10px',
+        borderRadius: '16px',
+    };
 
     return (
         <div>
@@ -95,17 +116,32 @@ const App = () => {
                     >Ctrl-D</Button>
                 </>
             )}
-            <VariableDisp
-                connectedVariables={connectedVariables}
-                variableName='a'
-                displayName='Value of `a` in CircuitPython'
-            />
-            <VariableSetInt
-                setConnectedVariables={setConnectedVariables}
-                variableName='a'
-                displayName='Change `a` to'
-                sendData={sendData}
-            />
+            {widgets.map((wid) => {
+                let content;
+                if (wid.type === "VariableDisp") {
+                    content = (
+                        <VariableDisp
+                            connectedVariables={connectedVariables}
+                            variableName={wid.variableName}
+                            displayName={wid.displayName}
+                        />
+                    )
+                } else if (wid.type === "VariableSetInt") {
+                    content = (
+                        <VariableSetInt
+                            setConnectedVariables={setConnectedVariables}
+                            variableName={wid.variableName}
+                            displayName={wid.displayName}
+                            sendData={sendData}
+                        />
+                    )
+                }
+                return (
+                    <Box sx={widgetStyles}>
+                        {content}
+                    </Box>
+                )
+            })}
         </div>
     );
 };
@@ -113,8 +149,8 @@ const App = () => {
 const VariableDisp = ({ connectedVariables, variableName, displayName }) => {
     return (
         <>
-            <p><b>{displayName}:</b></p>
-            <p>{connectedVariables[variableName]}</p>
+            <b>{displayName}:</b>
+            {connectedVariables[variableName]}
         </>
     )
 }
@@ -136,8 +172,8 @@ const VariableSetInt = ({ setConnectedVariables, variableName, displayName, send
 
     return (
         <>
-            <p>{displayName}</p>
             <form onSubmit={handleSubmit}>
+                {displayName}
                 <input value={value} onChange={event => {
                     setValue(event.target.value)
                 }}></input>
