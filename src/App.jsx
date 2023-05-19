@@ -105,6 +105,13 @@ const App = () => {
     const unwindow = (key) => {
         setWindowed(key, false);
     }
+
+    const closeWidget = (key) => {
+        setWidgets(cur => cur.filter(
+            wid => wid.key !== key
+        ));
+    }
+
     // add widget test
     const [open, setOpen] = React.useState(true);
 
@@ -167,11 +174,15 @@ const App = () => {
                         />
                     )
                 }
+                const closeButton = <button onClick={() => {closeWidget(wid.key)}}>x</button>;
                 if (wid.windowed) {
                     return (
                         <NewWindow onUnload={
                             () => { unwindow(wid.key) }
-                        }>{content}</NewWindow>
+                        }>
+                            {closeButton}
+                            {content}
+                        </NewWindow>
                     )
                 } else {
                     return (
@@ -180,6 +191,7 @@ const App = () => {
                                 () => { enwindow(wid.key) }
                             }>Float to Window</button>
                             <br />
+                            {closeButton}
                             {content}
                         </Box>
                     )
