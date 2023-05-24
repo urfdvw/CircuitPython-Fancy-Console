@@ -18,6 +18,10 @@ const CV_JSON_START = '<CV>'; // ConnectedVariableJson start
 const CV_JSON_END = '</CV>';
 
 const latestTitle = (text) => {
+    if (!(text.includes(TITLE_START) && text.includes(TITLE_END))) {
+        return {};
+    }
+
     return text.split(TITLE_START).at(-1).split(TITLE_END).at(0);
 }
 
