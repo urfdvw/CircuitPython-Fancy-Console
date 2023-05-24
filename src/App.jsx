@@ -210,7 +210,7 @@ const VariableSetInt = ({ setConnectedVariables, variableName, displayName, send
     const handleSubmit = (event) => {
         event.preventDefault()
         const updatedVariable = { [variableName]: parseInt(value) } //https://stackoverflow.com/a/29077216/7037749
-        sendData(JSON.stringify(updatedVariable) + LINE_END);
+        sendData(CV_JSON_START + JSON.stringify(updatedVariable) + CV_JSON_END + LINE_END);
         setConnectedVariables(cur => {
             return {
                 ...cur,
