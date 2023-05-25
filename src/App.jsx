@@ -1,58 +1,42 @@
+// React Native
 import React, { useState, useEffect } from 'react';
+// MUI
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
-import ScrollableFeed from 'react-scrollable-feed'
-// https://stackoverflow.com/a/52673227/7037749
+// Other packages
+import ScrollableFeed from 'react-scrollable-feed' // https://stackoverflow.com/a/52673227/7037749
 import NewWindow from "react-new-window";
-
+// Mine
 import useSerial from "./useSerial";
+import {
+    latestTitle,
+    removeInBetween,
+    aggregateConnectedVariable
+} from "./textProcessor"
+import * as constants from "./constants"
+// Mine widgets
 import { VariableDisp, CreateVariableDisp } from "./VariableDisp";
 
-const TITLE_START = '\x1B]0;';
-const TITLE_END = '\x1B\\';
-const CTRL_C = "\x03";
-const CTRL_D = "\x04";
-const LINE_END = '\x0D';
-const CV_JSON_START = '<CV>'; // ConnectedVariableJson start
-const CV_JSON_END = '</CV>';
-
-const latestTitle = (text) => {
-    if (!(text.includes(TITLE_START) && text.includes(TITLE_END))) {
-        return {};
-    }
-
-    return text.split(TITLE_START).at(-1).split(TITLE_END).at(0);
-}
-
-const removeInBetween = (text, start, end) => {
-    if (text.includes(end)) {
-        return text.split(start).map(x => x.split(end).at(1)).join('');
-    } else {
-        return text.split(start)[0];
-    }
-}
-
-const aggregateConnectedVariable = (text) => {
-
-    if (!(text.includes(CV_JSON_START) && text.includes(CV_JSON_END))) {
-        return {};
-    }
-
-    return text.split(CV_JSON_START).slice(1).map(x =>
-        JSON.parse(x.split(CV_JSON_END).at(0))
-    ).reduce(
-        (accumulator, currentValue) => {
-            return { ...accumulator, ...currentValue };
-        }, {}
-    );
-}
 
 const App = () => {
-
+    // Hooks --------------------------------------
+    // serial related
     const { connect, disconnect, sendData, output, connected } = useSerial();
     const [input, setInput] = useState('');
     const [connectedVariables, setConnectedVariables] = useState({});
+    useEffect(() => {
+        setConnectedVariables(
+            cur_cv => {
+                return {
+                    ...cur_cv,
+                    ...aggregateConnectedVariable(output)
+                };
+            }
+        );
+    }, [output])
+
+    // widget related
     const [widgets, setWidgets] = useState([
         {
             "key": "sdkfjwdkjfhsadkjfh",
@@ -70,22 +54,27 @@ const App = () => {
         }
     ])
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        sendData(input + LINE_END);
-        setInput('');
-    };
-
-    useEffect(() => {
-        setConnectedVariables(
-            cur_cv => {
-                return {
-                    ...cur_cv,
-                    ...aggregateConnectedVariable(output)
-                };
-            }
-        );
-    }, [output])
+    // UI elements --------------------------------------
+    const widgetDisplaySelector = (wid) => {
+        if (wid.type === "VariableDisp") {
+            return (
+                <VariableDisp
+                    connectedVariables={connectedVariables}
+                    variableName={wid.variableName}
+                    displayName={wid.displayName}
+                />
+            )
+        } else if (wid.type === "VariableSetInt") {
+            return (
+                <VariableSetInt
+                    setConnectedVariables={setConnectedVariables}
+                    variableName={wid.variableName}
+                    displayName={wid.displayName}
+                    sendData={sendData}
+                />
+            )
+        }
+    }
 
     const widgetStyles = {
         bgcolor: 'background.paper',
@@ -96,6 +85,39 @@ const App = () => {
         borderRadius: '16px',
     };
 
+    const windowWrapper = (wid, content) => {
+        if (wid.windowed) {
+            return (
+                <NewWindow
+                    key={wid.key}
+                    onUnload={
+                        () => { unwindow(wid.key) }
+                    }
+                >
+                    {content}
+                </NewWindow>
+            )
+        } else {
+            return (
+                <Box sx={widgetStyles} key={wid.key}>
+                    <button onClick={
+                        () => { enwindow(wid.key) }
+                    }>Float to Window</button>
+                    <br />
+                    {content}
+                </Box>
+            )
+        }
+    }
+    // handler --------------------------------------
+    // serial related
+    const handleSend2MCU = (e) => {
+        e.preventDefault();
+        sendData(input + LINE_END);
+        setInput('');
+    };
+
+    // widget related
     const setWindowed = (key, value) => {
         setWidgets(cur => cur.map(
             wid => (wid.key === key) ? { ...wid, "windowed": value } : wid
@@ -126,22 +148,22 @@ const App = () => {
             {!connected && (
                 <Button variant="contained" onClick={connect}>Connect</Button>
             )}
-            <div style={{ "maxHeight": '350pt' }}>
+            <div style={{ "height": '350pt' }}>
                 <ScrollableFeed>
                     <pre>{
                         removeInBetween(
                             removeInBetween(
                                 output,
-                                TITLE_START, TITLE_END
+                                constants.TITLE_START, constants.TITLE_END
                             ),
-                            CV_JSON_START, CV_JSON_END
+                            constants.CV_JSON_START, constants.CV_JSON_END
                         )
                     }</pre>
                 </ScrollableFeed>
             </div>
             {connected && (
                 <>
-                    <form onSubmit={handleSubmit}>
+                    <form onSubmit={handleSend2MCU}>
                         <TextField
                             variant="standard"
                             type="text"
@@ -151,55 +173,23 @@ const App = () => {
                         <Button variant="contained" type="submit">Send</Button>
                     </form>
                     <Button variant="contained"
-                        onClick={() => { sendData(CTRL_C) }}
+                        onClick={() => { sendData(constants.CTRL_C) }}
                     >Ctrl-C</Button>
                     <Button variant="contained"
-                        onClick={() => { sendData(CTRL_D) }}
+                        onClick={() => { sendData(constants.CTRL_D) }}
                     >Ctrl-D</Button>
                 </>
             )}
             {widgets.map((wid) => {
-                let content;
-                if (wid.type === "VariableDisp") {
-                    content = (
-                        <VariableDisp
-                            connectedVariables={connectedVariables}
-                            variableName={wid.variableName}
-                            displayName={wid.displayName}
-                        />
-                    )
-                } else if (wid.type === "VariableSetInt") {
-                    content = (
-                        <VariableSetInt
-                            setConnectedVariables={setConnectedVariables}
-                            variableName={wid.variableName}
-                            displayName={wid.displayName}
-                            sendData={sendData}
-                        />
-                    )
-                }
-                const closeButton = <button onClick={() => {closeWidget(wid.key)}}>x</button>;
-                if (wid.windowed) {
-                    return (
-                        <NewWindow onUnload={
-                            () => { unwindow(wid.key) }
-                        }>
-                            {closeButton}
-                            {content}
-                        </NewWindow>
-                    )
-                } else {
-                    return (
-                        <Box sx={widgetStyles}>
-                            <button onClick={
-                                () => { enwindow(wid.key) }
-                            }>Float to Window</button>
-                            <br />
-                            {closeButton}
-                            {content}
-                        </Box>
-                    )
-                }
+                const closeButton = <button onClick={() => { closeWidget(wid.key) }}>x</button>;
+                const content = widgetDisplaySelector(wid);
+                return windowWrapper(
+                    wid,
+                    <>
+                        {closeButton}
+                        {content}
+                    </>
+                )
             })}
             <CreateVariableDisp open={open} setOpen={setOpen} setWidgets={setWidgets} />
         </div>
@@ -214,7 +204,7 @@ const VariableSetInt = ({ setConnectedVariables, variableName, displayName, send
     const handleSubmit = (event) => {
         event.preventDefault()
         const updatedVariable = { [variableName]: parseInt(value) } //https://stackoverflow.com/a/29077216/7037749
-        sendData(CV_JSON_START + JSON.stringify(updatedVariable) + CV_JSON_END + LINE_END);
+        sendData(constants.CV_JSON_START + JSON.stringify(updatedVariable) + constants.CV_JSON_END + constants.LINE_END);
         setConnectedVariables(cur => {
             return {
                 ...cur,
