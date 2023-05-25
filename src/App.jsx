@@ -262,10 +262,25 @@ const VariableSetInt = ({
   sendData,
 }) => {
   const [value, setValue] = useState(0);
+  const [type, setType] = useState("int");
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    const updatedVariable = { [variableName]: parseInt(value) }; //https://stackoverflow.com/a/29077216/7037749
+    let variableValue;
+    if (type === "int") {
+      variableValue = parseInt(value);
+    } else if (type === "float") {
+      variableValue = parseFloat(value);
+    } else if (type === "string") {
+      variableValue = String(value);
+    } else if (type === "json") {
+      try {
+        variableValue = JSON.parse(value);
+      } catch {
+        alert('Input is not a valid json');
+      }
+    }
+    const updatedVariable = { [variableName]: variableValue }; //https://stackoverflow.com/a/29077216/7037749
     sendData(
       constants.CV_JSON_START +
         JSON.stringify(updatedVariable) +
@@ -290,6 +305,18 @@ const VariableSetInt = ({
             setValue(event.target.value);
           }}
         ></input>
+        <Select
+          value={type}
+          label="add_widget"
+          onChange={(e) => {
+            setType(e.target.value);
+          }}
+        >
+          <MenuItem value={"int"}>int</MenuItem>
+          <MenuItem value={"float"}>float</MenuItem>
+          <MenuItem value={"string"}>string</MenuItem>
+          <MenuItem value={"json"}>json</MenuItem>
+        </Select>
         <button>Set</button>
       </form>
     </>
