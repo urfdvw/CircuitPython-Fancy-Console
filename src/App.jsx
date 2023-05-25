@@ -4,6 +4,10 @@ import React, { useState, useEffect } from 'react';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
+import InputLabel from "@mui/material/InputLabel";
+import MenuItem from "@mui/material/MenuItem";
+import FormControl from "@mui/material/FormControl";
+import Select from "@mui/material/Select";
 // Other packages
 import ScrollableFeed from 'react-scrollable-feed' // https://stackoverflow.com/a/52673227/7037749
 import NewWindow from "react-new-window";
@@ -53,6 +57,8 @@ const App = () => {
             "windowed": false
         }
     ])
+
+    const [creatingWidget, setCreatingWidget] = React.useState("") // which create widget modal is showing
 
     // UI elements --------------------------------------
     const widgetDisplaySelector = (wid) => {
@@ -138,8 +144,9 @@ const App = () => {
         ));
     }
 
-    // add widget test
-    const [open, setOpen] = React.useState(true);
+    const onWidgetCreateClose = () => {
+        setCreatingWidget("");
+    }
 
     return (
         <div>
@@ -151,13 +158,13 @@ const App = () => {
             <div style={{ "height": '350pt' }}>
                 <ScrollableFeed>
                     <pre>{
-                        removeInBetween(
-                            removeInBetween(
-                                output,
-                                constants.TITLE_START, constants.TITLE_END
-                            ),
-                            constants.CV_JSON_START, constants.CV_JSON_END
-                        )
+                        // removeInBetween(
+                        //     removeInBetween(
+                                output
+                                // ,constants.TITLE_START, constants.TITLE_END
+                        //     ),
+                        //     constants.CV_JSON_START, constants.CV_JSON_END
+                        // )
                     }</pre>
                 </ScrollableFeed>
             </div>
@@ -191,7 +198,21 @@ const App = () => {
                     </>
                 )
             })}
-            <CreateVariableDisp open={open} setOpen={setOpen} setWidgets={setWidgets} />
+            <FormControl fullWidth>
+                <InputLabel id="simple-select-label">Add Widget</InputLabel>
+                <Select
+                    labelId="simple-select-label"
+                    id="simple-select"
+                    value={creatingWidget}
+                    label="add_widget"
+                    onChange={(event) => {
+                        setCreatingWidget(event.target.value);
+                    }}
+                >
+                    <MenuItem value={'VariableDisp'}>VariableDisp</MenuItem>
+                </Select>
+            </FormControl>
+            <CreateVariableDisp open={creatingWidget === "VariableDisp"} onClose={onWidgetCreateClose} setWidgets={setWidgets} />
         </div>
     );
 };

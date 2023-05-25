@@ -16,7 +16,7 @@ export const VariableDisp = ({ connectedVariables, variableName, displayName }) 
     )
 }
 
-export const CreateVariableDisp = ({ open, setOpen, setWidgets }) => {
+export const CreateVariableDisp = ({ open, onClose, setWidgets }) => {
     const [variableName, setVariableName] = React.useState("");
     const [displayName, setDisplayName] = React.useState("");
 
@@ -31,7 +31,7 @@ export const CreateVariableDisp = ({ open, setOpen, setWidgets }) => {
                 "windowed": false
             }
         ]});
-        setOpen(false);
+        onClose();
     }
     return (
         <Dialog open={open}>
@@ -61,7 +61,7 @@ export const CreateVariableDisp = ({ open, setOpen, setWidgets }) => {
             </DialogContent>
             <DialogActions>
                 <Button onClick={() => {
-                    setOpen(false);
+                    onClose();
                 }}> Cancel </Button>
                 <Button onClick={handleSubmit}>
                     Create
