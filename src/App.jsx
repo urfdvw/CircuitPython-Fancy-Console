@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
+import Autocomplete from '@mui/material/Autocomplete';
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
@@ -71,9 +72,7 @@ const App = () => {
     } else if (wid.type === "VariableSetInt") {
       return (
         <VariableSetInt
-          setConnectedVariables={setConnectedVariables}
-          variableName={wid.variableName}
-          displayName={wid.displayName}
+          connectedVariables={connectedVariables}
           sendData={sendData}
         />
       );
@@ -171,14 +170,14 @@ const App = () => {
             {rawSerialData
               ? output
               : removeInBetween(
-                  removeInBetween(
-                    output,
-                    constants.TITLE_START,
-                    constants.TITLE_END
-                  ),
-                  constants.CV_JSON_START,
-                  constants.CV_JSON_END
-                )}
+                removeInBetween(
+                  output,
+                  constants.TITLE_START,
+                  constants.TITLE_END
+                ),
+                constants.CV_JSON_START,
+                constants.CV_JSON_END
+              )}
           </pre>
         </ScrollableFeed>
       </div>
@@ -256,11 +255,10 @@ const App = () => {
 };
 
 const VariableSetInt = ({
-  setConnectedVariables,
-  variableName,
-  displayName,
+  connectedVariables,
   sendData,
 }) => {
+  const [variableName, setVariableName] = useState('');
   const [value, setValue] = useState(0);
   const [type, setType] = useState("int");
 
@@ -283,31 +281,47 @@ const VariableSetInt = ({
     const updatedVariable = { [variableName]: variableValue }; //https://stackoverflow.com/a/29077216/7037749
     sendData(
       constants.CV_JSON_START +
-        JSON.stringify(updatedVariable) +
-        constants.CV_JSON_END +
-        constants.LINE_END
+      JSON.stringify(updatedVariable) +
+      constants.CV_JSON_END +
+      constants.LINE_END
     );
-    setConnectedVariables((cur) => {
-      return {
-        ...cur,
-        ...updatedVariable,
-      };
-    });
+    // don't up date variable value on web directly, let the change reflected by update echo
   };
-
+  console.log(
+    Object.keys(connectedVariables)
+  )
   return (
     <>
-      <form onSubmit={handleSubmit}>
-        {displayName}
-        <input
-          value={value}
-          onChange={(event) => {
-            setValue(event.target.value);
-          }}
-        ></input>
+      <Autocomplete
+        disableClearable
+        id="combo-box-demo"
+        value={variableName}
+        onChange={(e, newValue) => {
+          setVariableName(newValue.label);
+        }}
+        options={
+          Object.keys(connectedVariables).map(key => {
+            return {
+              label: key
+            }
+          })
+        }
+        sx={{ width: 100 }}
+        renderInput={(params) => <TextField {...params} label="Variable" />}
+      />
+      <TextField
+        value={value}
+        onChange={(event) => {
+          setValue(event.target.value);
+        }}
+        label="value"
+      ></TextField>
+      <FormControl fullWidth>
+        <InputLabel id="demo-simple-select-label">type</InputLabel>
         <Select
+          labelId="demo-simple-select-label"
           value={type}
-          label="add_widget"
+          label="type"
           onChange={(e) => {
             setType(e.target.value);
           }}
@@ -317,8 +331,8 @@ const VariableSetInt = ({
           <MenuItem value={"string"}>string</MenuItem>
           <MenuItem value={"json"}>json</MenuItem>
         </Select>
-        <button>Set</button>
-      </form>
+      </FormControl>
+      <Button variant="contained" onClick={handleSubmit}>Set</Button>
     </>
   );
 };
