@@ -42,9 +42,6 @@ const VariableSet = ({
         );
         // don't up date variable value on web directly, let the change reflected by update echo
     };
-    console.log(
-        Object.keys(connectedVariables)
-    )
     return (
         <>
             <Autocomplete

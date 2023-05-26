@@ -32,12 +32,7 @@ const App = () => {
   const [input, setInput] = useState("");
   const [connectedVariables, setConnectedVariables] = useState({});
   useEffect(() => {
-    setConnectedVariables((cur_cv) => {
-      return {
-        ...cur_cv,
-        ...aggregateConnectedVariable(output),
-      };
-    });
+    setConnectedVariables(aggregateConnectedVariable(output));
   }, [output]);
   const [rawSerialData, setRawSerialData] = useState(false);
   // widget related
