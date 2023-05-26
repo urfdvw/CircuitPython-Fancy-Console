@@ -112,7 +112,7 @@ const App = () => {
   // serial related
   const handleSend2MCU = (e) => {
     e.preventDefault();
-    sendData(input + LINE_END);
+    sendData(input + constants.LINE_END);
     setInput("");
   };
 
@@ -191,7 +191,7 @@ const App = () => {
                 }}
                 inputProps={{ "aria-label": "controlled" }}
               />{" "}
-              Show raw serial data from MCU
+              Raw
               <div style={{ height: "350pt" }}>
                 <ScrollableFeed>
                   <pre>
