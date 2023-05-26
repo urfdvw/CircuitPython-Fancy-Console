@@ -28,12 +28,9 @@ class ConnectedVariables:
             assert all(
                 [key in self.vars for key in serial_updates_dict]
             ), "get unknown variable names from serial"
-            assert all(
-                [
-                    type(self.vars[key]) == type(value)
-                    for key, value in serial_updates_dict.items()
-                ]
-            ), "variable type does not match from serial"
+            # cast type 
+            for key, value in serial_updates_dict.items():
+                serial_updates_dict[key] = type(self.vars[key])(value)
             # echo update
             print(CV_JSON_START + json.dumps(serial_updates_dict) + CV_JSON_END, end='')
             # update
