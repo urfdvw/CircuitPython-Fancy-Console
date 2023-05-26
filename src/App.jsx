@@ -4,11 +4,8 @@ import React, { useState, useEffect } from "react";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
-import InputLabel from "@mui/material/InputLabel";
-import MenuItem from "@mui/material/MenuItem";
-import FormControl from "@mui/material/FormControl";
-import Select from "@mui/material/Select";
 import Switch from "@mui/material/Switch";
+import Grid from '@mui/material/Grid';
 // Other packages
 import ScrollableFeed from "react-scrollable-feed"; // https://stackoverflow.com/a/52673227/7037749
 import NewWindow from "react-new-window";
@@ -37,18 +34,19 @@ const App = () => {
   const [rawSerialData, setRawSerialData] = useState(false);
   // widget related
   const [widgets, setWidgets] = useState([
-    {
-      key: "sdkfjwdkjfhsadkjfh",
-      type: "VariableDisp",
-      variableName: "a",
-      displayName: "Value of `a` in CircuitPython",
-      windowed: false,
-    },
-    {
-      key: "fkjvhgifvbhgsjd",
-      type: "VariableSet",
-      windowed: false,
-    },
+    // // examples
+    // {
+    //   key: "sdkfjwdkjfhsadkjfh",
+    //   type: "VariableDisp",
+    //   variableName: "a",
+    //   displayName: "Value of `a` in CircuitPython",
+    //   windowed: false,
+    // },
+    // {
+    //   key: "fkjvhgifvbhgsjd",
+    //   type: "VariableSet",
+    //   windowed: false,
+    // },
   ]);
 
   const [creatingWidget, setCreatingWidget] = React.useState(""); // which create widget modal is showing
@@ -158,113 +156,105 @@ const App = () => {
   }
 
   return (
-    <div>
-      <h2>Serial Console</h2>
-      <h3>{latestTitle(output)}</h3>
-      {!connected && (
-        <Button variant="contained" onClick={connect}>
-          Connect
-        </Button>
-      )}
-      <Switch
-        checked={rawSerialData}
-        onChange={() => {
-          setRawSerialData((cur) => !cur);
-        }}
-        inputProps={{ "aria-label": "controlled" }}
-      />{" "}
-      Show raw serial data from MCU
-      <div style={{ height: "350pt" }}>
-        <ScrollableFeed>
-          <pre>
-            {rawSerialData
-              ? output
-              : removeInBetween(
-                removeInBetween(
-                  output,
-                  constants.TITLE_START,
-                  constants.TITLE_END
-                ),
-                constants.CV_JSON_START,
-                constants.CV_JSON_END
-              )}
-          </pre>
-        </ScrollableFeed>
-      </div>
-      {connected && (
-        <>
-          <form onSubmit={handleSend2MCU}>
-            <TextField
-              variant="standard"
-              type="text"
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-            />
-            <Button variant="contained" type="submit">
-              Send
+    <Box sx={{ flexGrow: 1 }}>
+      <Grid container spacing={2}>
+        <Grid item xs={6}>
+          <h2>Serial Console</h2>
+          {!connected && (
+            <Button variant="contained" onClick={connect}>
+              Connect
             </Button>
-          </form>
-          <Button
-            variant="contained"
-            onClick={() => {
-              sendData(constants.CTRL_C);
-            }}
-          >
-            Ctrl-C
-          </Button>
-          <Button
-            variant="contained"
-            onClick={() => {
-              sendData(constants.CTRL_D);
-            }}
-          >
-            Ctrl-D
-          </Button>
-        </>
-      )}
-      {widgets.map((wid) => {
-        const closeButton = (
-          <button
-            onClick={() => {
-              closeWidget(wid.key);
-            }}
-          >
-            x
-          </button>
-        );
-        const content = widgetDisplaySelector(wid);
-        return windowWrapper(
-          wid,
-          <>
-            {closeButton}
-            {content}
-          </>
-        );
-      })}
-      {/* need to be changed to menu
-      <FormControl fullWidth>
-        <InputLabel id="simple-select-label">Add Widget</InputLabel>
-        <Select
-          labelId="simple-select-label"
-          id="simple-select"
-          value={creatingWidget}
-          label="add_widget"
-          onChange={(event) => {
-            setCreatingWidget(event.target.value);
-          }}
-        >
-          <MenuItem value={"VariableDisp"}>VariableDisp</MenuItem>
-        </Select>
-      </FormControl> */}
-      <CreateWidget
-        handleClick={handleCreateWidget}
-      />
-      <CreateVariableDisp
-        open={creatingWidget === "VariableDisp"}
-        onClose={onWidgetCreateClose}
-        setWidgets={setWidgets}
-      />
-    </div>
+          )}
+          {connected && (
+            <>
+              <h3>{latestTitle(output)}</h3>
+              <Button
+                variant="contained"
+                onClick={() => {
+                  sendData(constants.CTRL_C);
+                }}
+              >
+                Ctrl-C
+              </Button>
+              <Button
+                variant="contained"
+                onClick={() => {
+                  sendData(constants.CTRL_D);
+                }}
+              >
+                Ctrl-D
+              </Button>
+              <Switch
+                checked={rawSerialData}
+                onChange={() => {
+                  setRawSerialData((cur) => !cur);
+                }}
+                inputProps={{ "aria-label": "controlled" }}
+              />{" "}
+              Show raw serial data from MCU
+              <div style={{ height: "350pt" }}>
+                <ScrollableFeed>
+                  <pre>
+                    {rawSerialData
+                      ? output
+                      : removeInBetween(
+                        removeInBetween(
+                          output,
+                          constants.TITLE_START,
+                          constants.TITLE_END
+                        ),
+                        constants.CV_JSON_START,
+                        constants.CV_JSON_END
+                      )}
+                  </pre>
+                </ScrollableFeed>
+              </div>
+              <form onSubmit={handleSend2MCU}>
+                <TextField
+                  variant="standard"
+                  type="text"
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                />
+                <Button variant="contained" type="submit">
+                  Send
+                </Button>
+              </form>
+            </>
+          )}
+        </Grid>
+
+        <Grid item xs={6}>
+          <CreateWidget
+            handleClick={handleCreateWidget}
+          />
+          <CreateVariableDisp
+            open={creatingWidget === "VariableDisp"}
+            onClose={onWidgetCreateClose}
+            setWidgets={setWidgets}
+          />
+          {widgets.map((wid) => {
+            const closeButton = (
+              <button
+                onClick={() => {
+                  closeWidget(wid.key);
+                }}
+              >
+                x
+              </button>
+            );
+            const content = widgetDisplaySelector(wid);
+            return windowWrapper(
+              wid,
+              <>
+                {closeButton}
+                {content}
+              </>
+            );
+          })}
+        </Grid>
+      </Grid>
+    </Box>
   );
 };
 
