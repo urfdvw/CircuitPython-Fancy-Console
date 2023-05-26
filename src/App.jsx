@@ -23,6 +23,7 @@ import * as constants from "./constants";
 // Mine widgets
 import { VariableDisp, CreateVariableDisp } from "./VariableDisp";
 import VariableSet from "./VariableSet"
+import CreateWidget from "./CreateWidget";
 
 const App = () => {
   // Hooks --------------------------------------
@@ -51,8 +52,6 @@ const App = () => {
     {
       key: "fkjvhgifvbhgsjd",
       type: "VariableSet",
-      variableName: "a",
-      displayName: "Change `a` to",
       windowed: false,
     },
   ]);
@@ -147,6 +146,22 @@ const App = () => {
     setCreatingWidget("");
   };
 
+  const handleCreateWidget = (name) => {
+    setCreatingWidget(name) // handled by modal if exisits
+    if (name === "VariableSet") {
+      setWidgets((cur) => {
+        return [
+          ...cur,
+          {
+            key: crypto.randomUUID(),
+            type: "VariableSet",
+            windowed: false,
+          },
+        ];
+      });
+    }
+  }
+
   return (
     <div>
       <h2>Serial Console</h2>
@@ -231,7 +246,7 @@ const App = () => {
           </>
         );
       })}
-      {/* need to be changed to menu */}
+      {/* need to be changed to menu
       <FormControl fullWidth>
         <InputLabel id="simple-select-label">Add Widget</InputLabel>
         <Select
@@ -245,7 +260,10 @@ const App = () => {
         >
           <MenuItem value={"VariableDisp"}>VariableDisp</MenuItem>
         </Select>
-      </FormControl>
+      </FormControl> */}
+      <CreateWidget
+        handleClick={handleCreateWidget}
+      />
       <CreateVariableDisp
         open={creatingWidget === "VariableDisp"}
         onClose={onWidgetCreateClose}
