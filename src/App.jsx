@@ -225,6 +225,7 @@ const App = () => {
         </Grid>
 
         <Grid item xs={6}>
+          <h2>Variable Widgets</h2>
           <CreateWidget
             handleClick={handleCreateWidget}
           />
