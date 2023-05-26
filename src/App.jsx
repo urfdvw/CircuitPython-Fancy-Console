@@ -231,6 +231,7 @@ const App = () => {
           </>
         );
       })}
+      {/* need to be changed to menu */}
       <FormControl fullWidth>
         <InputLabel id="simple-select-label">Add Widget</InputLabel>
         <Select
