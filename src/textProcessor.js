@@ -21,6 +21,8 @@ export const aggregateConnectedVariable = (text) => {
     if (!(text.includes(constants.CV_JSON_START) && text.includes(constants.CV_JSON_END))) {
         return {};
     }
+    // the latest session
+    text = text.split(constants.TITLE_END).at(-1);
     // return an object
     return text.split(constants.CV_JSON_START).slice(1).map(x =>
         JSON.parse(x.split(constants.CV_JSON_END).at(0))

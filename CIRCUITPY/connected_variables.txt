@@ -3,19 +3,24 @@ from matcher import BracketMatcher, MatcherProcessor
 
 CV_JSON_START = "<CV>"
 CV_JSON_END = "</CV>"
+LINE_END = "\n"
+UPDATE_PERIOD = 3
 
-class ConnectedVariablesManager:
+class ConnectedVariables:
     def __init__(self):
         self.vars = {}
-        self.debug = True
         self.cv_processor = MatcherProcessor(
             BracketMatcher(CV_JSON_START, CV_JSON_END),
             exit_action=self.exit_action
         )
-        
+        self.last_time_stamp = time.monotonic()
+
+    def heart_beat(self):
+        if time.monotonic() - self.last_time_stamp > UPDATE_PERIOD:
+            print(CV_JSON_START + json.dumps(self.vars) + CV_JSON_END, end='')
+            self.last_time_stamp = time.monotonic()
+
     def exit_action (self, text, branch):
-        if self.debug:
-            print('got:', text, branch)
         try:
             # parse
             serial_updates_dict = json.loads(branch.strip())
@@ -23,15 +28,12 @@ class ConnectedVariablesManager:
             assert all(
                 [key in self.vars for key in serial_updates_dict]
             ), "get unknown variable names from serial"
-            assert all(
-                [
-                    type(self.vars[key]) == type(value)
-                    for key, value in serial_updates_dict.items()
-                ]
-            ), "variable type does not match from serial"
+            # cast type 
+            for key, value in serial_updates_dict.items():
+                serial_updates_dict[key] = type(self.vars[key])(value)
+            # echo update
+            print(CV_JSON_START + json.dumps(serial_updates_dict) + CV_JSON_END, end='')
             # update
-            if self.debug:
-                print('dict differences:', serial_updates_dict)
             self.vars.update(serial_updates_dict)
         except Exception as e:
             self.serial_updates = ""  # clean up bad data
@@ -91,22 +93,4 @@ class ConnectedVariablesManager:
         updates_dict = {name: value for name, value in zip(var_names, var_values)}
         self.vars.update(updates_dict)
         # send updates
-        print(CV_JSON_START + json.dumps(updates_dict) + CV_JSON_END)
-
-
-cv = ConnectedVariablesManager()
-cv.define("a", 1)
-cv.define("b", 1.0)
-cv.write("a", 10)
-cv.write(["a", "b"], [100, 0.1])
-print(cv.read("a"))
-print(cv.read(["a", "b"]))
-
-while True:
-    cv.write("a", cv.read("a") + 1)
-    print(cv.read(["a", "b"]))
-    time.sleep(1)
-# {"a": 2}
-# {"a": 1.5}
-# {"b": 1.5}
-# {"c": 2}
+        print(CV_JSON_START + json.dumps(updates_dict) + CV_JSON_END, end='')
