@@ -55,7 +55,6 @@ class ConnectedVariables:
         # read from serial
         while n_bytes := supervisor.runtime.serial_bytes_available:
             self.cv_processor.push([sys.stdin.read(n_bytes)])
-            time.sleep(0.01)
 
     def read(self, var_names):
         """

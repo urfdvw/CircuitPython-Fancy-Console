@@ -21,6 +21,7 @@ import * as constants from "./constants";
 // My widgets
 import { VariableDisp, CreateVariableDisp } from "./VariableDisp";
 import VariableSet from "./VariableSet"
+import VariableSetBoolButton from "./VariableSetBoolButton"
 import CreateWidget from "./CreateWidget";
 // My data
 import matcher_py from "../CIRCUITPY/matcher.txt";
@@ -214,7 +215,7 @@ const App = () => {
               Raw
               <div style={{ height: "350pt" }}>
                 <ScrollableFeed>
-                  <pre>
+                  <pre style={{"white-space": "pre-wrap"}}>
                     {rawSerialData
                       ? output
                       : removeInBetween(
@@ -255,7 +256,7 @@ const App = () => {
           }}>
             Save Widgets
           </Button>
-          <Button onClick={async function() {
+          <Button onClick={async function () {
             setWidgets(JSON.parse(await readFile('widgets.json')))
           }}>
             Load Widgets
@@ -287,6 +288,11 @@ const App = () => {
               </>
             );
           })}
+          <VariableSetBoolButton
+            variableName='e'
+            displayName='set e'
+            sendData={sendData}
+          ></VariableSetBoolButton>
         </Grid>
       </Grid>
     </Box>
