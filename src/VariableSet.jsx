@@ -26,6 +26,8 @@ const VariableSet = ({
             variableValue = parseFloat(value);
         } else if (type === "string") {
             variableValue = String(value);
+        } else if (type === "bool") {
+            variableValue = value.trim().toLowerCase() === 'true' ? true : false;
         } else if (type === "json") {
             try {
                 variableValue = JSON.parse(value);
@@ -81,6 +83,7 @@ const VariableSet = ({
                     <MenuItem value={"int"}>int</MenuItem>
                     <MenuItem value={"float"}>float</MenuItem>
                     <MenuItem value={"string"}>string</MenuItem>
+                    <MenuItem value={"bool"}>bool</MenuItem>
                     <MenuItem value={"json"}>json</MenuItem>
                 </Select>
             </FormControl>
