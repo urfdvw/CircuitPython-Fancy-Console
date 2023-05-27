@@ -4,7 +4,7 @@ from matcher import BracketMatcher, MatcherProcessor
 CV_JSON_START = "<CV>"
 CV_JSON_END = "</CV>"
 LINE_END = "\n"
-UPDATE_PERIOD = 3
+UPDATE_PERIOD = 0.5
 
 class ConnectedVariables:
     def __init__(self):
@@ -17,6 +17,7 @@ class ConnectedVariables:
 
     def heart_beat(self):
         if time.monotonic() - self.last_time_stamp > UPDATE_PERIOD:
+            self.serial_read()
             print(CV_JSON_START + json.dumps(self.vars) + CV_JSON_END, end='')
             self.last_time_stamp = time.monotonic()
 
