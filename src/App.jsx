@@ -215,7 +215,7 @@ const App = () => {
               Raw
               <div style={{ height: "350pt" }}>
                 <ScrollableFeed>
-                  <pre style={{"white-space": "pre-wrap"}}>
+                  <pre style={{"whiteSpace": "pre-wrap"}}>
                     {rawSerialData
                       ? output
                       : removeInBetween(

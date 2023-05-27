@@ -47,6 +47,10 @@ const VariableSet = ({
     return (
         <>
             <Autocomplete
+                isOptionEqualToValue={(option, value) => {
+                    // console.log(option, value)
+                    return option.label === value
+                }}
                 disableClearable
                 id="combo-box-demo"
                 value={variableName}
