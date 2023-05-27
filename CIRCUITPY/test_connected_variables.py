@@ -16,7 +16,3 @@ while True:
     cv.write("a", cv.read("a") + 1)
     print(cv.read(["a", "b"]))
     time.sleep(1)
-# {"a": 2}
-# {"a": 1.5}
-# {"b": 1.5}
-# {"c": 2}

@@ -250,6 +250,16 @@ const App = () => {
           <Button onClick={handleInstallPyLib}>
             Install Connected Vairable Library
           </Button>
+          <Button onClick={() => {
+            writeFile('widgets.json', JSON.stringify(widgets))
+          }}>
+            Save Widgets
+          </Button>
+          <Button onClick={async function() {
+            setWidgets(JSON.parse(await readFile('widgets.json')))
+          }}>
+            Load Widgets
+          </Button>
           <CreateWidget
             handleClick={handleCreateWidget}
           />
