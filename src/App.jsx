@@ -17,10 +17,11 @@ import {
   aggregateConnectedVariable,
 } from "./textProcessor";
 import * as constants from "./constants";
-// Mine widgets
+// My widgets
 import { VariableDisp, CreateVariableDisp } from "./VariableDisp";
 import VariableSet from "./VariableSet"
 import CreateWidget from "./CreateWidget";
+// My data
 
 const App = () => {
   // Hooks --------------------------------------
