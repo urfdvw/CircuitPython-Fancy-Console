@@ -11,6 +11,7 @@ import ScrollableFeed from "react-scrollable-feed"; // https://stackoverflow.com
 import NewWindow from "react-new-window";
 // Mine
 import useSerial from "./useSerial";
+import useFileSystem from "./useFileSystem";
 import {
   latestTitle,
   removeInBetween,
@@ -22,6 +23,8 @@ import { VariableDisp, CreateVariableDisp } from "./VariableDisp";
 import VariableSet from "./VariableSet"
 import CreateWidget from "./CreateWidget";
 // My data
+import matcher_py from "../CIRCUITPY/matcher.txt";
+import connected_variables_py from "../CIRCUITPY/connected_variables.txt";
 
 const App = () => {
   // Hooks --------------------------------------
@@ -49,8 +52,10 @@ const App = () => {
     //   windowed: false,
     // },
   ]);
-
   const [creatingWidget, setCreatingWidget] = React.useState(""); // which create widget modal is showing
+
+  // file related
+  const { openDirectory, readFile, readDir, writeFile } = useFileSystem(null);
 
   // UI elements --------------------------------------
   const widgetDisplaySelector = (wid) => {
@@ -156,6 +161,20 @@ const App = () => {
     }
   }
 
+  const handleInstallPyLib = () => {
+    // https://stackoverflow.com/a/64788876/7037749
+    fetch(matcher_py)
+      .then((r) => r.text())
+      .then((text) => {
+        writeFile("lib/matcher.py", text);
+      });
+    fetch(connected_variables_py)
+      .then((r) => r.text())
+      .then((text) => {
+        writeFile("lib/connected_variables.py", text);
+      });
+  }
+
   return (
     <Box sx={{ flexGrow: 1 }}>
       <Grid container spacing={2}>
@@ -227,6 +246,10 @@ const App = () => {
 
         <Grid item xs={6}>
           <h2>Variable Widgets</h2>
+          <Button onClick={openDirectory}>open folder</Button>
+          <Button onClick={handleInstallPyLib}>
+            Install Connected Vairable Library
+          </Button>
           <CreateWidget
             handleClick={handleCreateWidget}
           />
