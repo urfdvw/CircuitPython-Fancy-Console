@@ -222,23 +222,25 @@ const App = () => {
                 inputProps={{ "aria-label": "controlled" }}
               />{" "}
               Raw
-              <div style={{ height: "350pt" }}>
-                <ScrollableFeed>
-                  <pre style={{ "whiteSpace": "pre-wrap" }}>
-                    {rawSerialData
-                      ? output
-                      : removeInBetween(
-                        removeInBetween(
-                          output,
-                          constants.TITLE_START,
-                          constants.TITLE_END
-                        ),
-                        constants.CV_JSON_START,
-                        constants.CV_JSON_END
-                      )}
-                  </pre>
-                </ScrollableFeed>
-              </div>
+              <Box sx={widgetStyles}>
+                <div style={{ height: "350pt" }}>
+                  <ScrollableFeed>
+                    <pre style={{ "whiteSpace": "pre-wrap" }}>
+                      {rawSerialData
+                        ? output
+                        : removeInBetween(
+                          removeInBetween(
+                            output,
+                            constants.TITLE_START,
+                            constants.TITLE_END
+                          ),
+                          constants.CV_JSON_START,
+                          constants.CV_JSON_END
+                        )}
+                    </pre>
+                  </ScrollableFeed>
+                </div>
+              </Box>
               <form onSubmit={handleSend2MCU}>
                 <TextField
                   variant="standard"

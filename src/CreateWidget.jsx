@@ -4,8 +4,8 @@ import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 
 const supportedWidgets = [
-    {name: "VariableDisp", lable: "Variable Display"},
-    {name: "VariableSet", lable: "Variable Set"}
+    { name: "VariableDisp", lable: "Variable Display" },
+    { name: "VariableSet", lable: "Variable Set" }
 ]
 
 export default function CreateWidget({ handleClick }) {
@@ -39,10 +39,15 @@ export default function CreateWidget({ handleClick }) {
                     "aria-labelledby": "basic-button"
                 }}
             >
-                {supportedWidgets.map((wid)=><MenuItem onClick={() => {
-                    handleClick(wid.name);
-                    handleClose();
-                    }}>{wid.lable}</MenuItem>)}
+                {supportedWidgets.map((wid) =>
+                    <MenuItem
+                        key={wid.name}
+                        onClick={() => {
+                            handleClick(wid.name);
+                            handleClose();
+                        }}>{wid.lable}
+                    </MenuItem>
+                )}
             </Menu>
         </div>
     );
