@@ -6,6 +6,10 @@ import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import Switch from "@mui/material/Switch";
 import Grid from '@mui/material/Grid';
+import DeleteIcon from '@mui/icons-material/Delete';
+import ArrowOutwardIcon from '@mui/icons-material/ArrowOutward';
+import IconButton from '@mui/material/IconButton';
+import Tooltip from '@mui/material/Tooltip';
 // Other packages
 import ScrollableFeed from "react-scrollable-feed"; // https://stackoverflow.com/a/52673227/7037749
 import NewWindow from "react-new-window";
@@ -102,13 +106,15 @@ const App = () => {
     } else {
       return (
         <Box sx={widgetStyles} key={wid.key}>
-          <button
-            onClick={() => {
-              enwindow(wid.key);
-            }}
-          >
-            Float to Window
-          </button>
+          <Tooltip title="Open this widget in a window">
+            <IconButton>
+              <ArrowOutwardIcon
+                onClick={() => {
+                  enwindow(wid.key);
+                }}
+              />
+            </IconButton>
+          </Tooltip>
           <br />
           {content}
         </Box>
@@ -215,7 +221,7 @@ const App = () => {
               Raw
               <div style={{ height: "350pt" }}>
                 <ScrollableFeed>
-                  <pre style={{"whiteSpace": "pre-wrap"}}>
+                  <pre style={{ "whiteSpace": "pre-wrap" }}>
                     {rawSerialData
                       ? output
                       : removeInBetween(
@@ -271,13 +277,15 @@ const App = () => {
           />
           {widgets.map((wid) => {
             const closeButton = (
-              <button
-                onClick={() => {
-                  closeWidget(wid.key);
-                }}
-              >
-                x
-              </button>
+              <Tooltip title="Remove this widget">
+                <IconButton>
+                  <DeleteIcon
+                    onClick={() => {
+                      closeWidget(wid.key);
+                    }}
+                  />
+                </IconButton>
+              </Tooltip>
             );
             const content = widgetDisplaySelector(wid);
             return windowWrapper(
