@@ -25,7 +25,7 @@ import * as constants from "./constants";
 // My widgets
 import { VariableDisp, CreateVariableDisp } from "./VariableDisp";
 import VariableSet from "./VariableSet"
-import VariableSetBoolButton from "./VariableSetBoolButton"
+import { VariableSetBoolButton, CreateVariableSetBoolButton } from "./VariableSetBoolButton"
 import CreateWidget from "./CreateWidget";
 // My data
 import matcher_py from "../CIRCUITPY/matcher.txt";
@@ -56,6 +56,13 @@ const App = () => {
     //   type: "VariableSet",
     //   windowed: false,
     // },
+    // {
+    //   key: "sdfgsdfgsdfg3rsdav",
+    //   type: "VariableSetBoolButton",
+    //   variableName: "e",
+    //   displayName: "set e",
+    //   windowed: false,
+    // },
   ]);
   const [creatingWidget, setCreatingWidget] = React.useState(""); // which create widget modal is showing
 
@@ -63,7 +70,7 @@ const App = () => {
   const { openDirectory, directoryReady, readFile, readDir, writeFile } = useFileSystem(null);
 
   // UI elements --------------------------------------
-  const widgetDisplaySelector = (wid) => {
+  const json2WidgetContent = (wid) => {
     if (wid.type === "VariableDisp") {
       return (
         <VariableDisp
@@ -79,6 +86,14 @@ const App = () => {
           sendData={sendData}
         />
       );
+    } else if (wid.type === "VariableSetBoolButton") {
+      return (
+        <VariableSetBoolButton
+          variableName={wid.variableName}
+          displayName={wid.displayName}
+          sendData={sendData}
+        ></VariableSetBoolButton>
+      );
     }
   };
 
@@ -93,8 +108,8 @@ const App = () => {
   };
 
   const windowWrapper = (wid, content) => {
-    if (wid.windowed) {
-      return (
+    return wid.windowed
+      ? (
         <NewWindow
           key={wid.key}
           onUnload={() => {
@@ -103,27 +118,49 @@ const App = () => {
         >
           {content}
         </NewWindow>
-      );
-    } else {
-      return (
+      )
+      : (
         <Box sx={widgetStyles} key={wid.key}>
-          <div style={{ float: "right" }}>
-            <Tooltip
-              title="Open this widget in a window">
-              <IconButton
-                onClick={() => {
-                  enwindow(wid.key);
-                }}
-              >
-                <ArrowOutwardIcon />
-              </IconButton>
-            </Tooltip>
-          </div>
           {content}
         </Box>
       );
-    }
   };
+
+  const json2Widget = (wid) => {
+    const closeButton = (
+      <Tooltip title="Remove this widget">
+        <IconButton onClick={() => {
+          closeWidget(wid.key);
+        }}
+        >
+          <DeleteIcon />
+        </IconButton>
+      </Tooltip>
+    );
+    const enWindowButton = (
+      <Tooltip
+        title="Open this widget in a window">
+        <IconButton
+          onClick={() => {
+            enwindow(wid.key);
+          }}
+        >
+          <ArrowOutwardIcon />
+        </IconButton>
+      </Tooltip>
+    );
+    const content = json2WidgetContent(wid);
+    return windowWrapper(
+      wid,
+      <>
+        <div style={{ float: "right" }}>
+          {closeButton}
+          {wid.windowed ? <></> : enWindowButton}
+        </div>
+        {content}
+      </>
+    );
+  }
   // handler --------------------------------------
   // serial related
   const handleSend2MCU = (e) => {
@@ -286,33 +323,12 @@ const App = () => {
             onClose={onWidgetCreateClose}
             setWidgets={setWidgets}
           />
-          {widgets.map((wid) => {
-            const closeButton = (
-              <div style={{ float: "right" }}>
-                <Tooltip title="Remove this widget">
-                  <IconButton onClick={() => {
-                    closeWidget(wid.key);
-                  }}
-                  >
-                    <DeleteIcon />
-                  </IconButton>
-                </Tooltip>
-              </div>
-            );
-            const content = widgetDisplaySelector(wid);
-            return windowWrapper(
-              wid,
-              <>
-                {closeButton}
-                {content}
-              </>
-            );
-          })}
-          <VariableSetBoolButton
-            variableName='e'
-            displayName='set e'
-            sendData={sendData}
-          ></VariableSetBoolButton>
+          <CreateVariableSetBoolButton
+            open={creatingWidget === "VariableSetBoolButton"}
+            onClose={onWidgetCreateClose}
+            setWidgets={setWidgets}
+          />
+          {widgets.map(json2Widget)}
         </Grid>
       </Grid>
     </Box>

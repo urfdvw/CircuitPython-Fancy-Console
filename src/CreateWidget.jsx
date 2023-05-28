@@ -5,7 +5,8 @@ import MenuItem from "@mui/material/MenuItem";
 
 const supportedWidgets = [
     { name: "VariableDisp", lable: "Variable Display" },
-    { name: "VariableSet", lable: "Variable Set" }
+    { name: "VariableSetBoolButton", lable: "Button" },
+    { name: "VariableSet", lable: "Variable Set" },
 ]
 
 export default function CreateWidget({ handleClick }) {
