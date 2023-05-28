@@ -60,7 +60,7 @@ const App = () => {
   const [creatingWidget, setCreatingWidget] = React.useState(""); // which create widget modal is showing
 
   // file related
-  const { openDirectory, readFile, readDir, writeFile } = useFileSystem(null);
+  const { openDirectory, directoryReady, readFile, readDir, writeFile } = useFileSystem(null);
 
   // UI elements --------------------------------------
   const widgetDisplaySelector = (wid) => {
@@ -89,6 +89,7 @@ const App = () => {
     border: 1,
     padding: "10px",
     borderRadius: "16px",
+    minHeight: "40px" // for the size of delet icon
   };
 
   const windowWrapper = (wid, content) => {
@@ -106,16 +107,18 @@ const App = () => {
     } else {
       return (
         <Box sx={widgetStyles} key={wid.key}>
-          <Tooltip title="Open this widget in a window">
-            <IconButton>
-              <ArrowOutwardIcon
+          <div style={{ float: "right" }}>
+            <Tooltip
+              title="Open this widget in a window">
+              <IconButton
                 onClick={() => {
                   enwindow(wid.key);
                 }}
-              />
-            </IconButton>
-          </Tooltip>
-          <br />
+              >
+                <ArrowOutwardIcon />
+              </IconButton>
+            </Tooltip>
+          </div>
           {content}
         </Box>
       );
@@ -254,19 +257,25 @@ const App = () => {
         <Grid item xs={6}>
           <h2>Variable Widgets</h2>
           <Button onClick={openDirectory}>open folder</Button>
-          <Button onClick={handleInstallPyLib}>
-            Install Connected Vairable Library
-          </Button>
-          <Button onClick={() => {
-            writeFile('widgets.json', JSON.stringify(widgets))
-          }}>
-            Save Widgets
-          </Button>
-          <Button onClick={async function () {
-            setWidgets(JSON.parse(await readFile('widgets.json')))
-          }}>
-            Load Widgets
-          </Button>
+          {
+            directoryReady
+              ? <>
+                <Button onClick={handleInstallPyLib}>
+                  Install Connected Vairable Library
+                </Button>
+                <Button onClick={() => {
+                  writeFile('widgets.json', JSON.stringify(widgets))
+                }}>
+                  Save Widgets
+                </Button>
+                <Button onClick={async function () {
+                  setWidgets(JSON.parse(await readFile('widgets.json')))
+                }}>
+                  Load Widgets
+                </Button>
+              </>
+              : <></>
+          }
           <CreateWidget
             handleClick={handleCreateWidget}
           />
@@ -277,15 +286,16 @@ const App = () => {
           />
           {widgets.map((wid) => {
             const closeButton = (
-              <Tooltip title="Remove this widget">
-                <IconButton>
-                  <DeleteIcon
-                    onClick={() => {
-                      closeWidget(wid.key);
-                    }}
-                  />
-                </IconButton>
-              </Tooltip>
+              <div style={{ float: "right" }}>
+                <Tooltip title="Remove this widget">
+                  <IconButton onClick={() => {
+                    closeWidget(wid.key);
+                  }}
+                  >
+                    <DeleteIcon />
+                  </IconButton>
+                </Tooltip>
+              </div>
             );
             const content = widgetDisplaySelector(wid);
             return windowWrapper(

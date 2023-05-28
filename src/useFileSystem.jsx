@@ -2,9 +2,16 @@ import { useState } from "react";
 
 const useFileSystem = () => {
   const [directoryHandle, setDirectoryHandle] = useState(null);
+  const [directoryReady, setDirectoryReady] = useState(false);
 
   async function openDirectory() {
-    setDirectoryHandle(await window.showDirectoryPicker());
+    try {
+      setDirectoryHandle(await window.showDirectoryPicker());
+      setDirectoryReady(true);
+    } catch (error) {
+      console.error(error);
+      return null;
+    }
   }
 
   async function fileHandle2text(fileHandle) {
@@ -79,7 +86,7 @@ const useFileSystem = () => {
     }
   }
 
-  return { openDirectory, readFile, readDir, writeFile };
+  return { openDirectory, directoryReady, readFile, readDir, writeFile };
 };
 
 export default useFileSystem;
