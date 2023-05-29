@@ -24,8 +24,9 @@ import {
 import * as constants from "./constants";
 // My widgets
 import { VariableDisp, CreateVariableDisp } from "./VariableDisp";
-import VariableSet from "./VariableSet"
 import { VariableSetBoolButton, CreateVariableSetBoolButton } from "./VariableSetBoolButton"
+import { VariableSetColor, CreateVariableSetColor } from "./VariableSetColor"
+import VariableSet from "./VariableSet"
 import CreateWidget from "./CreateWidget";
 // My data
 import matcher_py from "../CIRCUITPY/matcher.txt";
@@ -329,6 +330,11 @@ const App = () => {
             setWidgets={setWidgets}
           />
           {widgets.map(json2Widget)}
+          <VariableSetColor
+            variableName="c"
+            displayName={"set c"}
+            sendData={sendData}
+          ></VariableSetColor>
         </Grid>
       </Grid>
     </Box>

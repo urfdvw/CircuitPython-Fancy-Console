@@ -61,7 +61,7 @@ export const CreateVariableDisp = ({ open, onClose, setWidgets }) => {
         <TextField
           autoFocus
           margin="dense"
-          label="Display Name"
+          label="Display Text"
           fullWidth
           variant="standard"
           value={displayName}
