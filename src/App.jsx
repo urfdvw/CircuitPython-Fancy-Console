@@ -27,7 +27,7 @@ import { VariableDisp, CreateVariableDisp } from "./VariableDisp";
 import { VariableSetBoolButton, CreateVariableSetBoolButton } from "./VariableSetBoolButton"
 import { VariableSetColor, CreateVariableSetColor } from "./VariableSetColor"
 import VariableSet from "./VariableSet"
-import CreateWidget from "./CreateWidget";
+import CreateWidgetMenu from "./CreateWidget";
 // My data
 import matcher_py from "../CIRCUITPY/matcher.txt";
 import connected_variables_py from "../CIRCUITPY/connected_variables.txt";
@@ -193,7 +193,7 @@ const App = () => {
     setCreatingWidget("");
   };
 
-  const handleCreateWidget = (name) => {
+  const handleCreateWidgetMenu = (name) => {
     setCreatingWidget(name) // handled by modal if exisits
     if (name === "VariableSet") {
       setWidgets((cur) => {
@@ -316,8 +316,8 @@ const App = () => {
               </>
               : <></>
           }
-          <CreateWidget
-            handleClick={handleCreateWidget}
+          <CreateWidgetMenu
+            handleClick={handleCreateWidgetMenu}
           />
           <CreateVariableDisp
             open={creatingWidget === "VariableDisp"}

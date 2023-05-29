@@ -41,8 +41,11 @@ const useSerial = () => {
     readData();
 
     return () => {
-      active = false;
-      reader && reader.releaseLock();
+      const close = async () => {
+        active = false;
+        reader && await reader.releaseLock();
+      }
+      close();
     };
   }, [port]);
 

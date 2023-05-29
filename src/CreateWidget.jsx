@@ -9,7 +9,7 @@ const supportedWidgets = [
     { name: "VariableSet", lable: "Variable Set" },
 ]
 
-export default function CreateWidget({ handleClick }) {
+export default function CreateWidgetMenu({ handleClick }) {
     const [anchorEl, setAnchorEl] = React.useState(null);
     const open = Boolean(anchorEl);
     const handleClickButton = (event) => {
