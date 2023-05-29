@@ -27,7 +27,7 @@ import { VariableDisp, CreateVariableDisp } from "./VariableDisp";
 import { VariableSetBoolButton, CreateVariableSetBoolButton } from "./VariableSetBoolButton"
 import { VariableSetColor, CreateVariableSetColor } from "./VariableSetColor"
 import VariableSet from "./VariableSet"
-import CreateWidgetMenu from "./CreateWidget";
+import { CreateWidgetMenu, CreateWidgetDiag } from "./CreateWidget";
 // My data
 import matcher_py from "../CIRCUITPY/matcher.txt";
 import connected_variables_py from "../CIRCUITPY/connected_variables.txt";

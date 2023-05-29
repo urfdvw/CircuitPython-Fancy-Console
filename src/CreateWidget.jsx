@@ -9,7 +9,7 @@ const supportedWidgets = [
     { name: "VariableSet", lable: "Variable Set" },
 ]
 
-export default function CreateWidgetMenu({ handleClick }) {
+export function CreateWidgetMenu({ handleClick }) {
     const [anchorEl, setAnchorEl] = React.useState(null);
     const open = Boolean(anchorEl);
     const handleClickButton = (event) => {
@@ -53,3 +53,54 @@ export default function CreateWidgetMenu({ handleClick }) {
         </div>
     );
 }
+
+
+export const CreateWidgetDiag = ({ open, onClose, setWidgets, handleSubmit, title }) => {
+    const [variableName, setVariableName] = React.useState("");
+    const [displayName, setDisplayName] = React.useState("");
+
+    return (
+        <Dialog open={open}>
+            <DialogTitle> {title} </DialogTitle>
+            <DialogContent>
+                <DialogContentText>
+                    Please make sure there is a connected variable created in your
+                    microcontroller code.
+                </DialogContentText>
+                <TextField
+                    autoFocus
+                    margin="dense"
+                    label="Variable Name"
+                    fullWidth
+                    variant="standard"
+                    value={variableName}
+                    onChange={(event) => {
+                        setVariableName(event.target.value);
+                    }}
+                />
+                <TextField
+                    autoFocus
+                    margin="dense"
+                    label="Display Text"
+                    fullWidth
+                    variant="standard"
+                    value={displayName}
+                    onChange={(event) => {
+                        setDisplayName(event.target.value);
+                    }}
+                />
+            </DialogContent>
+            <DialogActions>
+                <Button
+                    onClick={() => {
+                        onClose();
+                    }}
+                >
+                    {" "}
+                    Cancel{" "}
+                </Button>
+                <Button onClick={() => {handleSubmit(setWidgets, variableName, displayName)}}>Create</Button>
+            </DialogActions>
+        </Dialog>
+    );
+};

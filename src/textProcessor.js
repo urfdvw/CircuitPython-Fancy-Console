@@ -24,11 +24,16 @@ export const aggregateConnectedVariable = (text) => {
     // the latest session
     text = text.split(constants.TITLE_END).at(-1);
     // return an object
-    return text.split(constants.CV_JSON_START).slice(1).map(x =>
-        JSON.parse(x.split(constants.CV_JSON_END).at(0))
-    ).reduce(
-        (accumulator, currentValue) => {
-            return { ...accumulator, ...currentValue };
-        }, {}
-    );
+    try {
+        return text.split(constants.CV_JSON_START).slice(1).map(x =>
+            JSON.parse(x.split(constants.CV_JSON_END).at(0))
+        ).reduce(
+            (accumulator, currentValue) => {
+                return { ...accumulator, ...currentValue };
+            }, {}
+        );
+    } catch (error) {
+        console.error(error);
+        return {};
+    }
 }

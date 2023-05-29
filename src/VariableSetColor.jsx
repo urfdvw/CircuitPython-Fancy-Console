@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import TextField from "@mui/material/TextField";
@@ -8,6 +8,7 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import Box from '@mui/material/Box';
+import useSlowChangeState from "./useSlowChangeState"
 
 
 import { RgbColorPicker } from "react-colorful";
@@ -23,7 +24,11 @@ export const VariableSetColor = ({
         g: 255,
         b: 255
     });
-    const handleSend = () => {
+
+    // send data on change
+    const slowColor = useSlowChangeState(color, 0.3);
+
+    const handleSend = (color) => {
         const updatedVariable = { [variableName]: [color.r, color.g, color.b] };
         sendData(
             constants.CV_JSON_START +
@@ -32,27 +37,21 @@ export const VariableSetColor = ({
             constants.LINE_END
         );
     }
+
+    useEffect(() => {
+        handleSend(color)
+    }, [slowColor])
+
     function componentToHex(c) {
         var hex = c.toString(16);
         return hex.length == 1 ? "0" + hex : hex;
     }
 
     return (
-        <Box sx={{ display: 'flex' }}>
-            <Box sx={{ flexGrow: 1 }}>
-                <RgbColorPicker color={color} onChange={setColor} />
-            </Box>
-            <Button
-                style={{
-                    backgroundColor: "#" + componentToHex(color.r) + componentToHex(color.g) + componentToHex(color.b),
-                    padding: "18px 36px",
-                    fontSize: "18px"
-                }}
-                variant="contained"
-            >
-                {displayName}
-            </Button>
-        </Box>
+        <>
+            <span>{displayName}</span>
+            <RgbColorPicker color={color} onChange={setColor} style={{ float: "right" }} />
+        </>
     );
 };
 
