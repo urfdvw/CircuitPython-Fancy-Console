@@ -23,9 +23,9 @@ import {
 } from "./textProcessor";
 import * as constants from "./constants";
 // My widgets
-import { VariableDisp, CreateVariableDisp } from "./VariableDisp";
-import { VariableSetBoolButton, CreateVariableSetBoolButton } from "./VariableSetBoolButton"
-import { VariableSetColor, CreateVariableSetColor } from "./VariableSetColor"
+import { VariableDisp, variableDispObj, variableDispTitle } from "./VariableDisp";
+import { VariableSetBoolButton, variableSetBoolButtonObj, variableSetBoolTitle } from "./VariableSetBoolButton"
+import { VariableSetColor, variableSetColorObj, variableSetColorTitle } from "./VariableSetColor"
 import VariableSet from "./VariableSet"
 import { CreateWidgetMenu, CreateWidgetDiag } from "./CreateWidget";
 // My data
@@ -64,14 +64,21 @@ const App = () => {
     //   displayName: "set e",
     //   windowed: false,
     // },
+    {
+      key: "sadfjkhsdgiofu",
+      type: "VariableSetColor",
+      variableName: "c",
+      displayName: "set c",
+      windowed: false,
+    },
   ]);
-  const [creatingWidget, setCreatingWidget] = React.useState(""); // which create widget modal is showing
+  const [widgetCreateDiag, setWidgetCreateDiag] = React.useState(<></>); // which create widget modal is showing
 
   // file related
   const { openDirectory, directoryReady, readFile, readDir, writeFile } = useFileSystem(null);
 
   // UI elements --------------------------------------
-  const json2WidgetContent = (wid) => {
+  const obj2WidgetContent = (wid) => {
     if (wid.type === "VariableDisp") {
       return (
         <VariableDisp
@@ -95,6 +102,16 @@ const App = () => {
           sendData={sendData}
         ></VariableSetBoolButton>
       );
+    } else if (wid.type === "VariableSetColor") {
+      return (
+        <VariableSetColor
+          variableName={wid.variableName}
+          displayName={wid.displayName}
+          sendData={sendData}
+        ></VariableSetColor>
+      );
+    } else {
+      return {}
     }
   };
 
@@ -150,7 +167,7 @@ const App = () => {
         </IconButton>
       </Tooltip>
     );
-    const content = json2WidgetContent(wid);
+    const content = obj2WidgetContent(wid);
     return windowWrapper(
       wid,
       <>
@@ -190,11 +207,10 @@ const App = () => {
   };
 
   const onWidgetCreateClose = () => {
-    setCreatingWidget("");
+    setWidgetCreateDiag(<></>)
   };
 
   const handleCreateWidgetMenu = (name) => {
-    setCreatingWidget(name) // handled by modal if exisits
     if (name === "VariableSet") {
       setWidgets((cur) => {
         return [
@@ -206,6 +222,36 @@ const App = () => {
           },
         ];
       });
+    } else if (name === "VariableDisp") {
+      setWidgetCreateDiag(
+        <CreateWidgetDiag
+          onClose={onWidgetCreateClose}
+          setWidgets={setWidgets}
+          open={true}
+          widgetObj={variableDispObj}
+          title={variableDispTitle}
+        />
+      )
+    } else if (name === "VariableSetBoolButton") {
+      setWidgetCreateDiag(
+        <CreateWidgetDiag
+          onClose={onWidgetCreateClose}
+          setWidgets={setWidgets}
+          open={true}
+          widgetObj={variableSetBoolButtonObj}
+          title={variableSetBoolTitle}
+        />
+      )
+    } else if (name === "VariableSetColor") {
+      setWidgetCreateDiag(
+        <CreateWidgetDiag
+          onClose={onWidgetCreateClose}
+          setWidgets={setWidgets}
+          open={true}
+          widgetObj={variableSetColorObj}
+          title={variableSetColorTitle}
+        />
+      )
     }
   }
 
@@ -319,22 +365,8 @@ const App = () => {
           <CreateWidgetMenu
             handleClick={handleCreateWidgetMenu}
           />
-          <CreateVariableDisp
-            open={creatingWidget === "VariableDisp"}
-            onClose={onWidgetCreateClose}
-            setWidgets={setWidgets}
-          />
-          <CreateVariableSetBoolButton
-            open={creatingWidget === "VariableSetBoolButton"}
-            onClose={onWidgetCreateClose}
-            setWidgets={setWidgets}
-          />
+          {widgetCreateDiag}
           {widgets.map(json2Widget)}
-          <VariableSetColor
-            variableName="c"
-            displayName={"set c"}
-            sendData={sendData}
-          ></VariableSetColor>
         </Grid>
       </Grid>
     </Box>

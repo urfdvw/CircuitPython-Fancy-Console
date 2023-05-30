@@ -1,11 +1,18 @@
 import * as React from "react";
-import Button from "@mui/material/Button";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
+import Button from "@mui/material/Button";
+import Dialog from "@mui/material/Dialog";
+import TextField from "@mui/material/TextField";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
 
 const supportedWidgets = [
     { name: "VariableDisp", lable: "Variable Display" },
     { name: "VariableSetBoolButton", lable: "Button" },
+    { name: "VariableSetColor", lable: "Color Picker" },
     { name: "VariableSet", lable: "Variable Set" },
 ]
 
@@ -55,7 +62,7 @@ export function CreateWidgetMenu({ handleClick }) {
 }
 
 
-export const CreateWidgetDiag = ({ open, onClose, setWidgets, handleSubmit, title }) => {
+export const CreateWidgetDiag = ({ open, onClose, setWidgets, widgetObj, title }) => {
     const [variableName, setVariableName] = React.useState("");
     const [displayName, setDisplayName] = React.useState("");
 
@@ -99,7 +106,16 @@ export const CreateWidgetDiag = ({ open, onClose, setWidgets, handleSubmit, titl
                     {" "}
                     Cancel{" "}
                 </Button>
-                <Button onClick={() => {handleSubmit(setWidgets, variableName, displayName)}}>Create</Button>
+                <Button onClick={() => {
+                    setWidgets((cur) => {
+                        return [
+                            ...cur,
+                            // change the obj below
+                            widgetObj(variableName, displayName)
+                        ];
+                    });
+                    onClose();
+                }}>Create</Button>
             </DialogActions>
         </Dialog>
     );

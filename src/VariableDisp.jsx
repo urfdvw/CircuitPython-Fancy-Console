@@ -20,67 +20,14 @@ export const VariableDisp = ({
   );
 };
 
-export const CreateVariableDisp = ({ open, onClose, setWidgets }) => {
-  const [variableName, setVariableName] = React.useState("");
-  const [displayName, setDisplayName] = React.useState("");
+export const variableDispObj = (variableName, displayName) => {
+  return {
+    key: crypto.randomUUID(),
+    type: "VariableDisp",
+    variableName: variableName,
+    displayName: displayName,
+    windowed: false,
+  }
+}
 
-  const handleSubmit = () => {
-    setWidgets((cur) => {
-      return [
-        ...cur,
-        {
-          key: crypto.randomUUID(),
-          type: "VariableDisp",
-          variableName: variableName,
-          displayName: displayName,
-          windowed: false,
-        },
-      ];
-    });
-    onClose();
-  };
-  return (
-    <Dialog open={open}>
-      <DialogTitle> Create a Variable Display</DialogTitle>
-      <DialogContent>
-        <DialogContentText>
-          Please make sure there is a connected variable created in your
-          microcontroller code.
-        </DialogContentText>
-        <TextField
-          autoFocus
-          margin="dense"
-          label="Variable Name"
-          fullWidth
-          variant="standard"
-          value={variableName}
-          onChange={(event) => {
-            setVariableName(event.target.value);
-          }}
-        />
-        <TextField
-          autoFocus
-          margin="dense"
-          label="Display Text"
-          fullWidth
-          variant="standard"
-          value={displayName}
-          onChange={(event) => {
-            setDisplayName(event.target.value);
-          }}
-        />
-      </DialogContent>
-      <DialogActions>
-        <Button
-          onClick={() => {
-            onClose();
-          }}
-        >
-          {" "}
-          Cancel{" "}
-        </Button>
-        <Button onClick={handleSubmit}>Create</Button>
-      </DialogActions>
-    </Dialog>
-  );
-};
+export const variableDispTitle = "Create a Variable Display";

@@ -1,16 +1,6 @@
 
 import React, { useState, useEffect } from "react";
-import Button from "@mui/material/Button";
-import Dialog from "@mui/material/Dialog";
-import TextField from "@mui/material/TextField";
-import DialogActions from "@mui/material/DialogActions";
-import DialogContent from "@mui/material/DialogContent";
-import DialogContentText from "@mui/material/DialogContentText";
-import DialogTitle from "@mui/material/DialogTitle";
-import Box from '@mui/material/Box';
 import useSlowChangeState from "./useSlowChangeState"
-
-
 import { RgbColorPicker } from "react-colorful";
 import * as constants from "./constants";
 
@@ -50,77 +40,19 @@ export const VariableSetColor = ({
     return (
         <>
             <span>{displayName}</span>
-            <RgbColorPicker color={color} onChange={setColor} style={{ float: "right" }} />
+            <RgbColorPicker color={color} onChange={setColor} />
         </>
     );
 };
 
-
-export const CreateVariableSetColor = ({ open, onClose, setWidgets }) => {
-    const [variableName, setVariableName] = React.useState("");
-    const [displayName, setDisplayName] = React.useState("");
-
-    const handleSubmit = () => {
-        setWidgets((cur) => {
-            return [
-                ...cur,
-                // change the obj below
-                {
-                    key: crypto.randomUUID(),
-                    type: "VariableSetColor",
-                    variableName: variableName,
-                    displayName: displayName,
-                    windowed: false,
-                },
-            ];
-        });
-        onClose();
-    };
-    return (
-        <Dialog open={open}>
-            {/* change the title below */}
-            <DialogTitle> Color picker that send a list of 3 integer between [0, 255] represent the amount of Red, Green and Blue</DialogTitle>
-
-            <DialogContent>
-                <DialogContentText>
-                    Please make sure there is a connected variable created in your
-                    microcontroller code.
-                </DialogContentText>
-                {/* change the fields if needed*/}
-                <TextField
-                    autoFocus
-                    margin="dense"
-                    label="Variable Name"
-                    fullWidth
-                    variant="standard"
-                    value={variableName}
-                    onChange={(event) => {
-                        setVariableName(event.target.value);
-                    }}
-                />
-                <TextField
-                    autoFocus
-                    margin="dense"
-                    label="Display Text"
-                    fullWidth
-                    variant="standard"
-                    value={displayName}
-                    onChange={(event) => {
-                        setDisplayName(event.target.value);
-                    }}
-                />
-            </DialogContent>
-            <DialogActions>
-                <Button
-                    onClick={() => {
-                        onClose();
-                    }}
-                >
-                    {" "}
-                    Cancel{" "}
-                </Button>
-                <Button onClick={handleSubmit}>Create</Button>
-            </DialogActions>
-        </Dialog>
-    );
+export const variableSetColorObj = (variableName, displayName) => {
+    return {
+        key: crypto.randomUUID(),
+        type: "VariableSetColor",
+        variableName: variableName,
+        displayName: displayName,
+        windowed: false,
+    }
 };
+
+export const variableSetColorTitle = "Color picker that send a list of 3 integer between [0, 255] represent the amount of Red, Green and Blue"
