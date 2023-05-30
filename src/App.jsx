@@ -64,13 +64,13 @@ const App = () => {
     //   displayName: "set e",
     //   windowed: false,
     // },
-    {
-      key: "sadfjkhsdgiofu",
-      type: "VariableSetColor",
-      variableName: "c",
-      displayName: "set c",
-      windowed: false,
-    },
+    // {
+    //   key: "sadfjkhsdgiofu",
+    //   type: "VariableSetColor",
+    //   variableName: "c",
+    //   displayName: "set c",
+    //   windowed: false,
+    // },
   ]);
   const [widgetCreateDiag, setWidgetCreateDiag] = React.useState(<></>); // which create widget modal is showing
 
