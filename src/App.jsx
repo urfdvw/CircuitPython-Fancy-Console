@@ -5,11 +5,11 @@ import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import Switch from "@mui/material/Switch";
-import Grid from '@mui/material/Grid';
-import DeleteIcon from '@mui/icons-material/Delete';
-import ArrowOutwardIcon from '@mui/icons-material/ArrowOutward';
-import IconButton from '@mui/material/IconButton';
-import Tooltip from '@mui/material/Tooltip';
+import Grid from "@mui/material/Grid";
+import DeleteIcon from "@mui/icons-material/Delete";
+import ArrowOutwardIcon from "@mui/icons-material/ArrowOutward";
+import IconButton from "@mui/material/IconButton";
+import Tooltip from "@mui/material/Tooltip";
 // Other packages
 import ScrollableFeed from "react-scrollable-feed"; // https://stackoverflow.com/a/52673227/7037749
 import NewWindow from "react-new-window";
@@ -23,10 +23,22 @@ import {
 } from "./textProcessor";
 import * as constants from "./constants";
 // My widgets
-import { VariableDisp, variableDispObj, variableDispTitle } from "./VariableDisp";
-import { VariableSetBoolButton, variableSetBoolButtonObj, variableSetBoolTitle } from "./VariableSetBoolButton"
-import { VariableSetColor, variableSetColorObj, variableSetColorTitle } from "./VariableSetColor"
-import VariableSet from "./VariableSet"
+import {
+  VariableDisp,
+  variableDispObj,
+  variableDispTitle,
+} from "./VariableDisp";
+import {
+  VariableSetBoolButton,
+  variableSetBoolButtonObj,
+  variableSetBoolTitle,
+} from "./VariableSetBoolButton";
+import {
+  VariableSetColor,
+  variableSetColorObj,
+  variableSetColorTitle,
+} from "./VariableSetColor";
+import VariableSet from "./VariableSet";
 import { CreateWidgetMenu, CreateWidgetDiag } from "./CreateWidget";
 // My data
 import matcher_py from "../CIRCUITPY/matcher.txt";
@@ -75,7 +87,8 @@ const App = () => {
   const [widgetCreateDiag, setWidgetCreateDiag] = React.useState(<></>); // which create widget modal is showing
 
   // file related
-  const { openDirectory, directoryReady, readFile, readDir, writeFile } = useFileSystem(null);
+  const { openDirectory, directoryReady, readFile, readDir, writeFile } =
+    useFileSystem(null);
 
   // UI elements --------------------------------------
   const obj2WidgetContent = (wid) => {
@@ -111,7 +124,7 @@ const App = () => {
         ></VariableSetColor>
       );
     } else {
-      return {}
+      return {};
     }
   };
 
@@ -122,42 +135,40 @@ const App = () => {
     border: 1,
     padding: "10px",
     borderRadius: "16px",
-    minHeight: "40px" // for the size of delet icon
+    minHeight: "40px", // for the size of delet icon
   };
 
   const windowWrapper = (wid, content) => {
-    return wid.windowed
-      ? (
-        <NewWindow
-          key={wid.key}
-          onUnload={() => {
-            unwindow(wid.key);
-          }}
-        >
-          {content}
-        </NewWindow>
-      )
-      : (
-        <Box sx={widgetStyles} key={wid.key}>
-          {content}
-        </Box>
-      );
+    return wid.windowed ? (
+      <NewWindow
+        key={wid.key}
+        onUnload={() => {
+          unwindow(wid.key);
+        }}
+      >
+        {content}
+      </NewWindow>
+    ) : (
+      <Box sx={widgetStyles} key={wid.key}>
+        {content}
+      </Box>
+    );
   };
 
   const json2Widget = (wid) => {
     const closeButton = (
       <Tooltip title="Remove this widget">
-        <IconButton onClick={() => {
-          closeWidget(wid.key);
-        }}
+        <IconButton
+          onClick={() => {
+            closeWidget(wid.key);
+          }}
         >
           <DeleteIcon />
         </IconButton>
       </Tooltip>
     );
     const enWindowButton = (
-      <Tooltip
-        title="Open this widget in a window">
+      <Tooltip title="Open this widget in a window">
         <IconButton
           onClick={() => {
             enwindow(wid.key);
@@ -178,7 +189,7 @@ const App = () => {
         {content}
       </>
     );
-  }
+  };
   // handler --------------------------------------
   // serial related
   const handleSend2MCU = (e) => {
@@ -207,7 +218,7 @@ const App = () => {
   };
 
   const onWidgetCreateClose = () => {
-    setWidgetCreateDiag(<></>)
+    setWidgetCreateDiag(<></>);
   };
 
   const handleCreateWidgetMenu = (name) => {
@@ -231,7 +242,7 @@ const App = () => {
           widgetObj={variableDispObj}
           title={variableDispTitle}
         />
-      )
+      );
     } else if (name === "VariableSetBoolButton") {
       setWidgetCreateDiag(
         <CreateWidgetDiag
@@ -241,7 +252,7 @@ const App = () => {
           widgetObj={variableSetBoolButtonObj}
           title={variableSetBoolTitle}
         />
-      )
+      );
     } else if (name === "VariableSetColor") {
       setWidgetCreateDiag(
         <CreateWidgetDiag
@@ -251,9 +262,9 @@ const App = () => {
           widgetObj={variableSetColorObj}
           title={variableSetColorTitle}
         />
-      )
+      );
     }
-  }
+  };
 
   const handleInstallPyLib = () => {
     // https://stackoverflow.com/a/64788876/7037749
@@ -267,7 +278,7 @@ const App = () => {
       .then((text) => {
         writeFile("lib/connected_variables.py", text);
       });
-  }
+  };
 
   return (
     <Box sx={{ flexGrow: 1 }}>
@@ -309,18 +320,18 @@ const App = () => {
               <Box sx={widgetStyles}>
                 <div style={{ height: "350pt" }}>
                   <ScrollableFeed>
-                    <pre style={{ "whiteSpace": "pre-wrap" }}>
+                    <pre style={{ whiteSpace: "pre-wrap" }}>
                       {rawSerialData
                         ? output
                         : removeInBetween(
-                          removeInBetween(
-                            output,
-                            constants.TITLE_START,
-                            constants.TITLE_END
-                          ),
-                          constants.CV_JSON_START,
-                          constants.CV_JSON_END
-                        )}
+                            removeInBetween(
+                              output,
+                              constants.TITLE_START,
+                              constants.TITLE_END
+                            ),
+                            constants.CV_JSON_START,
+                            constants.CV_JSON_END
+                          )}
                     </pre>
                   </ScrollableFeed>
                 </div>
@@ -343,28 +354,30 @@ const App = () => {
         <Grid item xs={6}>
           <h2>Variable Widgets</h2>
           <Button onClick={openDirectory}>open folder</Button>
-          {
-            directoryReady
-              ? <>
-                <Button onClick={handleInstallPyLib}>
-                  Install Connected Vairable Library
-                </Button>
-                <Button onClick={() => {
-                  writeFile('widgets.json', JSON.stringify(widgets))
-                }}>
-                  Save Widgets
-                </Button>
-                <Button onClick={async function () {
-                  setWidgets(JSON.parse(await readFile('widgets.json')))
-                }}>
-                  Load Widgets
-                </Button>
-              </>
-              : <></>
-          }
-          <CreateWidgetMenu
-            handleClick={handleCreateWidgetMenu}
-          />
+          {directoryReady ? (
+            <>
+              <Button onClick={handleInstallPyLib}>
+                Install Connected Vairable Library
+              </Button>
+              <Button
+                onClick={() => {
+                  writeFile("widgets.json", JSON.stringify(widgets));
+                }}
+              >
+                Save Widgets
+              </Button>
+              <Button
+                onClick={async function () {
+                  setWidgets(JSON.parse(await readFile("widgets.json")));
+                }}
+              >
+                Load Widgets
+              </Button>
+            </>
+          ) : (
+            <></>
+          )}
+          <CreateWidgetMenu handleClick={handleCreateWidgetMenu} />
           {widgetCreateDiag}
           {widgets.map(json2Widget)}
         </Grid>
