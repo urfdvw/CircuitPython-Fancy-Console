@@ -15,10 +15,14 @@ class ConnectedVariables:
         )
         self.last_time_stamp = time.monotonic()
 
+    def update(self):
+        self.serial_read()
+        print(CV_JSON_START + json.dumps(self.vars) + CV_JSON_END, end='')
+
+
     def heart_beat(self):
         if time.monotonic() - self.last_time_stamp > UPDATE_PERIOD:
-            self.serial_read()
-            print(CV_JSON_START + json.dumps(self.vars) + CV_JSON_END, end='')
+            self.update()
             self.last_time_stamp = time.monotonic()
 
     def exit_action (self, text, branch):
