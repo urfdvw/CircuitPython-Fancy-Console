@@ -10,6 +10,9 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import ArrowOutwardIcon from "@mui/icons-material/ArrowOutward";
 import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
+import Tabs from "@mui/material/Tabs";
+import Tab from "@mui/material/Tab";
+import { TabPanel, a11yProps } from "./TabPanel";
 // Other packages
 import ScrollableFeed from "react-scrollable-feed"; // https://stackoverflow.com/a/52673227/7037749
 import NewWindow from "react-new-window";
@@ -89,6 +92,10 @@ const App = () => {
   // file related
   const { openDirectory, directoryReady, readFile, readDir, writeFile } =
     useFileSystem(null);
+
+  // UI related
+
+  const [tabValue, setTabValue] = React.useState(0);
 
   // UI elements --------------------------------------
   const obj2WidgetContent = (wid) => {
@@ -282,106 +289,117 @@ const App = () => {
 
   return (
     <Box sx={{ flexGrow: 1 }}>
-      <Grid container spacing={2}>
-        <Grid item xs={6}>
-          <h2>Serial Console</h2>
-          {!connected && (
-            <Button variant="contained" onClick={connect}>
-              Connect
+      <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+        <Tabs
+          value={tabValue}
+          onChange={(event, newValue) => {
+            setTabValue(newValue);
+          }}
+          aria-label="basic tabs example"
+        >
+          <Tab label="Serial Console" {...a11yProps(0)} />
+          <Tab label="Widgets" {...a11yProps(1)} />
+          <Tab label="Fancy Console" {...a11yProps(2)} />
+        </Tabs>
+      </Box>
+      <TabPanel value={tabValue} index={0}>
+        {!connected && (
+          <Button variant="contained" onClick={connect}>
+            Connect
+          </Button>
+        )}
+        {connected && (
+          <>
+            <h3>{latestTitle(output)}</h3>
+            <Button
+              variant="contained"
+              onClick={() => {
+                sendData(constants.CTRL_C);
+              }}
+            >
+              Ctrl-C
             </Button>
-          )}
-          {connected && (
-            <>
-              <h3>{latestTitle(output)}</h3>
-              <Button
-                variant="contained"
-                onClick={() => {
-                  sendData(constants.CTRL_C);
-                }}
-              >
-                Ctrl-C
+            <Button
+              variant="contained"
+              onClick={() => {
+                sendData(constants.CTRL_D);
+              }}
+            >
+              Ctrl-D
+            </Button>
+            <Switch
+              checked={rawSerialData}
+              onChange={() => {
+                setRawSerialData((cur) => !cur);
+              }}
+              inputProps={{ "aria-label": "controlled" }}
+            />{" "}
+            Raw
+            <Box sx={widgetStyles}>
+              <div style={{ height: "350pt" }}>
+                <ScrollableFeed>
+                  <pre style={{ whiteSpace: "pre-wrap" }}>
+                    {rawSerialData
+                      ? output
+                      : removeInBetween(
+                          removeInBetween(
+                            output,
+                            constants.TITLE_START,
+                            constants.TITLE_END
+                          ),
+                          constants.CV_JSON_START,
+                          constants.CV_JSON_END
+                        )}
+                  </pre>
+                </ScrollableFeed>
+              </div>
+            </Box>
+            <form onSubmit={handleSend2MCU}>
+              <TextField
+                variant="standard"
+                type="text"
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+              />
+              <Button variant="contained" type="submit">
+                Send
               </Button>
-              <Button
-                variant="contained"
-                onClick={() => {
-                  sendData(constants.CTRL_D);
-                }}
-              >
-                Ctrl-D
-              </Button>
-              <Switch
-                checked={rawSerialData}
-                onChange={() => {
-                  setRawSerialData((cur) => !cur);
-                }}
-                inputProps={{ "aria-label": "controlled" }}
-              />{" "}
-              Raw
-              <Box sx={widgetStyles}>
-                <div style={{ height: "350pt" }}>
-                  <ScrollableFeed>
-                    <pre style={{ whiteSpace: "pre-wrap" }}>
-                      {rawSerialData
-                        ? output
-                        : removeInBetween(
-                            removeInBetween(
-                              output,
-                              constants.TITLE_START,
-                              constants.TITLE_END
-                            ),
-                            constants.CV_JSON_START,
-                            constants.CV_JSON_END
-                          )}
-                    </pre>
-                  </ScrollableFeed>
-                </div>
-              </Box>
-              <form onSubmit={handleSend2MCU}>
-                <TextField
-                  variant="standard"
-                  type="text"
-                  value={input}
-                  onChange={(e) => setInput(e.target.value)}
-                />
-                <Button variant="contained" type="submit">
-                  Send
-                </Button>
-              </form>
-            </>
-          )}
-        </Grid>
-
-        <Grid item xs={6}>
-          <h2>Variable Widgets</h2>
-          <Button onClick={openDirectory}>open folder</Button>
-          {directoryReady ? (
-            <>
-              <Button onClick={handleInstallPyLib}>
-                Install Connected Vairable Library
-              </Button>
-              <Button
-                onClick={() => {
-                  writeFile("widgets.json", JSON.stringify(widgets));
-                }}
-              >
-                Save Widgets
-              </Button>
-              <Button
-                onClick={async function () {
-                  setWidgets(JSON.parse(await readFile("widgets.json")));
-                }}
-              >
-                Load Widgets
-              </Button>
-            </>
-          ) : (
-            <></>
-          )}
-          <CreateWidgetMenu handleClick={handleCreateWidgetMenu} />
-          {widgetCreateDiag}
-          {widgets.map(json2Widget)}
-        </Grid>
-      </Grid>
+            </form>
+          </>
+        )}
+      </TabPanel>
+      <TabPanel value={tabValue} index={1}>
+        <Button onClick={openDirectory}>open folder</Button>
+        {directoryReady ? (
+          <>
+            <Button onClick={handleInstallPyLib}>
+              Install Connected Vairable Library
+            </Button>
+            <Button
+              onClick={() => {
+                writeFile("widgets.json", JSON.stringify(widgets));
+              }}
+            >
+              Save Widgets
+            </Button>
+            <Button
+              onClick={async function () {
+                setWidgets(JSON.parse(await readFile("widgets.json")));
+              }}
+            >
+              Load Widgets
+            </Button>
+          </>
+        ) : (
+          <></>
+        )}
+        <CreateWidgetMenu handleClick={handleCreateWidgetMenu} />
+        {widgetCreateDiag}
+        {widgets.map(json2Widget)}
+      </TabPanel>
+      <TabPanel value={tabValue} index={2}>
+        Item Three
+      </TabPanel>
     </Box>
   );
 };
