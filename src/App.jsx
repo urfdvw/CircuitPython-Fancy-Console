@@ -97,6 +97,37 @@ const App = () => {
 
   const [tabValue, setTabValue] = React.useState(0);
 
+  // fancy console split
+  const output2BlockText = () => {
+    // const cv_removed = removeInBetween(
+    //   output,
+    //   constants.CV_JSON_START,
+    //   constants.CV_JSON_END
+    // );
+
+    const cv_removed = output;
+    const end_unified = cv_removed.split('Done').join('@');
+
+    const splitted_by_ends = end_unified.split(/\x1B]0;(?:(?!@)(?:.|\n))*@(?:(?!B)(?:.|\n))*\x1B\\/);
+
+    let out = [];
+    for (const sec of splitted_by_ends) {
+      console.log(sec)
+      const parts = sec.split(/\x1B(?:(?!B)(?:.|\n))*\x1B\\/);
+      const info = parts[0].trim();
+      const content = parts.slice(1).join('').trim();
+      out.push([info, content])
+    }
+    return out
+  }
+
+  useEffect(() => {
+    // for debug
+    console.log([
+      output2BlockText()
+    ])
+  }, [output])
+
   // UI elements --------------------------------------
   const obj2WidgetContent = (wid) => {
     if (wid.type === "VariableDisp") {
@@ -342,14 +373,14 @@ const App = () => {
                     {rawSerialData
                       ? output
                       : removeInBetween(
-                          removeInBetween(
-                            output,
-                            constants.TITLE_START,
-                            constants.TITLE_END
-                          ),
-                          constants.CV_JSON_START,
-                          constants.CV_JSON_END
-                        )}
+                        removeInBetween(
+                          output,
+                          constants.TITLE_START,
+                          constants.TITLE_END
+                        ),
+                        constants.CV_JSON_START,
+                        constants.CV_JSON_END
+                      )}
                   </pre>
                 </ScrollableFeed>
               </div>
@@ -398,7 +429,18 @@ const App = () => {
         {widgets.map(json2Widget)}
       </TabPanel>
       <TabPanel value={tabValue} index={2}>
-        Item Three
+        {output2BlockText().map(block => {
+          return <>
+            <pre style={{ whiteSpace: "pre-wrap" }}>
+              {block[0]}
+            </pre>
+            <Box sx={widgetStyles}>
+              <pre style={{ whiteSpace: "pre-wrap" }}>
+                {block[1]}
+              </pre>
+            </Box>
+          </>
+        })}
       </TabPanel>
     </Box>
   );
