@@ -23,6 +23,7 @@ import {
   latestTitle,
   removeInBetween,
   aggregateConnectedVariable,
+  globStringToRegex,
 } from "./textProcessor";
 import * as constants from "./constants";
 // My widgets
@@ -99,34 +100,38 @@ const App = () => {
 
   // fancy console split
   const output2BlockText = () => {
-    // const cv_removed = removeInBetween(
-    //   output,
-    //   constants.CV_JSON_START,
-    //   constants.CV_JSON_END
-    // );
+    const cv_removed = removeInBetween(
+      output,
+      constants.CV_JSON_START,
+      constants.CV_JSON_END
+    );
 
-    const cv_removed = output;
     const end_unified = cv_removed.split('Done').join('@');
 
-    const splitted_by_ends = end_unified.split(/\x1B]0;(?:(?!@)(?:.|\n))*@(?:(?!B)(?:.|\n))*\x1B\\/);
+    const splitted_by_ends = end_unified.split(globStringToRegex(
+      constants.TITLE_START + "*@*" + constants.TITLE_END
+    ));
 
-    let out = [];
+    let text_blocks = [];
     for (const sec of splitted_by_ends) {
       console.log(sec)
-      const parts = sec.split(/\x1B(?:(?!B)(?:.|\n))*\x1B\\/);
+      const parts = sec.split(globStringToRegex(
+        constants.TITLE_START + "*" + constants.TITLE_END
+      ));
       const info = parts[0].trim();
       const content = parts.slice(1).join('').trim();
-      out.push([info, content])
+      text_blocks.push([info, content])
     }
-    return out
+
+    return text_blocks
   }
 
-  useEffect(() => {
-    // for debug
-    console.log([
-      output2BlockText()
-    ])
-  }, [output])
+  // useEffect(() => {
+  //   // for debug
+  //   console.log([
+  //     output2BlockText()
+  //   ])
+  // }, [output])
 
   // UI elements --------------------------------------
   const obj2WidgetContent = (wid) => {
