@@ -1,12 +1,5 @@
+import { Margin } from "@mui/icons-material";
 import * as constants from "./constants"
-
-export const latestTitle = (text) => {
-    if (!(text.includes(constants.TITLE_START) && text.includes(constants.TITLE_END))) {
-        return "";
-    }
-
-    return text.split(constants.TITLE_START).at(-1).split(constants.TITLE_END).at(0);
-}
 
 export function globStringToRegex(str) {
     // https://stackoverflow.com/a/13818704/7037749
@@ -28,29 +21,36 @@ function preg_quote(str, delimiter) {
     return (str + '').replace(new RegExp('[.\\\\+*?\\[\\^\\]$(){}=!<>|:\\' + (delimiter || '') + '-]', 'g'), '\\$&');
 }
 
+function matchesInBetween(text, start, end) {
+    if (text == null) {
+        return [];
+    }
+    text = text.split(end).join(end + ' \n '); // to break 2 possible results in different lines
+    const re = globStringToRegex(start + '*' + end);
+    let matches = text.match(re);
+    if (matches === null) { // the line above will return null if no matches (so strange)
+        matches = [];
+    }
+    return matches.map(x => x.slice(start.length, -end.length)); // remove the markers
+}
+
+
+export const latestTitle = (text) => {
+    const matches = matchesInBetween(text, constants.TITLE_START, constants.TITLE_END);
+    return matches.at(-1);
+}
+
+
 export const removeInBetween = (text, start, end) => {
     const re = globStringToRegex(start + '*' + end)
     return text.split(re).join('')
 }
 
 export const aggregateConnectedVariable = (text) => {
-    // if no start or ending markers
-    if (!(text.includes(constants.CV_JSON_START) && text.includes(constants.CV_JSON_END))) {
-        return {};
+    const cvBlocks = matchesInBetween(text, constants.CV_JSON_START, constants.CV_JSON_END)
+    var ConnectedVariable = {}
+    for (const b of cvBlocks) {
+        ConnectedVariable = { ...ConnectedVariable, ...JSON.parse(b) }
     }
-    // the latest session
-    text = text.split(constants.TITLE_END).at(-1);
-    // return an object
-    try {
-        return text.split(constants.CV_JSON_START).slice(1).map(x =>
-            JSON.parse(x.split(constants.CV_JSON_END).at(0))
-        ).reduce(
-            (accumulator, currentValue) => {
-                return { ...accumulator, ...currentValue };
-            }, {}
-        );
-    } catch (error) {
-        console.error(error);
-        return {};
-    }
+    return ConnectedVariable
 }

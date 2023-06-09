@@ -100,8 +100,10 @@ const App = () => {
 
   // fancy console split
   const output2BlockText = () => {
+    const extra_eol = output.split(constants.TITLE_END).join(constants.TITLE_END + '\n')
+
     const cv_removed = removeInBetween(
-      output,
+      extra_eol,
       constants.CV_JSON_START,
       constants.CV_JSON_END
     );
@@ -114,7 +116,6 @@ const App = () => {
 
     let text_blocks = [];
     for (const sec of splitted_by_ends) {
-      console.log(sec)
       const parts = sec.split(globStringToRegex(
         constants.TITLE_START + "*" + constants.TITLE_END
       ));
@@ -125,13 +126,6 @@ const App = () => {
 
     return text_blocks
   }
-
-  // useEffect(() => {
-  //   // for debug
-  //   console.log([
-  //     output2BlockText()
-  //   ])
-  // }, [output])
 
   // UI elements --------------------------------------
   const obj2WidgetContent = (wid) => {
