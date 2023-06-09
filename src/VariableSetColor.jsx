@@ -11,7 +11,7 @@ export const VariableSetColor = ({ variableName, displayName, sendData }) => {
   });
 
   // send data on change
-  const slowColor = useSlowChangeState(color, 0.3);
+  const slowColor = useSlowChangeState(color, 0.1);
 
   const handleSend = (color) => {
     const updatedVariable = { [variableName]: [color.r, color.g, color.b] };
