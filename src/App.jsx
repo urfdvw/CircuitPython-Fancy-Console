@@ -8,6 +8,7 @@ import Switch from "@mui/material/Switch";
 import Grid from "@mui/material/Grid";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ArrowOutwardIcon from "@mui/icons-material/ArrowOutward";
+import Divider from '@mui/material/Divider';
 import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
 import Tabs from "@mui/material/Tabs";
@@ -25,6 +26,7 @@ import {
   aggregateConnectedVariable,
   globStringToRegex,
 } from "./textProcessor";
+import { useSerialReceiveProcessor } from "./useSerialReceiveProcessor";
 import * as constants from "./constants";
 // My widgets
 import {
@@ -54,11 +56,13 @@ const App = () => {
   const { connect, disconnect, sendData, output, connected } = useSerial();
   const [input, setInput] = useState("");
   const [connectedVariables, setConnectedVariables] = useState({});
+  const [rawSerialData, setRawSerialData] = useState(false);
+  // Fancy Console
+  const { isCpy8, title, sessions } = useSerialReceiveProcessor(output);
+  // widget related
   useEffect(() => {
     setConnectedVariables(aggregateConnectedVariable(output));
   }, [output]);
-  const [rawSerialData, setRawSerialData] = useState(false);
-  // widget related
   const [widgets, setWidgets] = useState([
     // // examples
     // {

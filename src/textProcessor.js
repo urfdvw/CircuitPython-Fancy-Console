@@ -21,7 +21,7 @@ function preg_quote(str, delimiter) {
     return (str + '').replace(new RegExp('[.\\\\+*?\\[\\^\\]$(){}=!<>|:\\' + (delimiter || '') + '-]', 'g'), '\\$&');
 }
 
-function matchesInBetween(text, start, end) {
+export function matchesInBetween(text, start, end) {
     if (text == null) {
         return [];
     }
@@ -36,6 +36,7 @@ function matchesInBetween(text, start, end) {
 
 
 export const latestTitle = (text) => {
+    // migrated to useSerialReceiveProcessor
     const matches = matchesInBetween(text, constants.TITLE_START, constants.TITLE_END);
     return matches.at(-1);
 }

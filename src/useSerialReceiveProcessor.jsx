@@ -10,44 +10,57 @@
  */
 import { useState, useEffect } from "react";
 import * as constants from "./constants";
+import {
+  globStringToRegex,
+  matchesInBetween,
+  removeInBetween,
+} from "./textProcessor";
 
-const output2BlockText = () => {
+export const useSerialReceiveProcessor = (output) => {
+  const [isCpy8, setIsCpy8] = useState(false);
+  const [sessions, setSessions] = useState([]);
+  const [title, setTitle] = useState("");
+
+  useEffect(() => {
+    // set version
+    if (output.includes(constants.TITLE_END)) {
+      setIsCpy8(true);
+    }
+
+    // break titles into lines
     const extra_eol = output.split(constants.TITLE_END).join(constants.TITLE_END + '\n')
 
+    // remove connected variables
     const cv_removed = removeInBetween(
       extra_eol,
       constants.CV_JSON_START,
       constants.CV_JSON_END
     );
 
-    const end_unified = cv_removed.split('Done').join('@');
+    // break received text into session blocks
+    setSessions(cv_removed.split(constants.SESSION_BREAK).map(x => x.trim()));
 
-    const splitted_by_ends = end_unified.split(globStringToRegex(
-      constants.TITLE_START + "*@*" + constants.TITLE_END
-    ));
-
-    let text_blocks = [];
-    for (const sec of splitted_by_ends) {
-      const parts = sec.split(globStringToRegex(
-        constants.TITLE_START + "*" + constants.TITLE_END
-      ));
-      const info = parts[0].trim();
-      const content = parts.slice(1).join('').trim();
-      text_blocks.push([info, content])
+    // Title related fucntions (Cpy 8+)
+    if (!isCpy8) {
+      return
     }
 
-    return text_blocks
-  }
+    // get latest title
+    setTitle(matchesInBetween(cv_removed, constants.TITLE_START, constants.TITLE_END).at(-1))
 
-export const useSerialReceiveProcessor = (output) => {
-    const [isCpy8, setIsCpy8] = useState(false);
-
-    useEffect(()=>{
-        // set version
-        if (output.includes(constants.TITLE_END)) {
-            setIsCpy8(true);
+    // split each session in to blocks
+    setSessions((cur)=>{
+      return cur.map((sec => {
+        const parts = sec.split(globStringToRegex(
+          constants.TITLE_START + "*" + constants.TITLE_END
+        ));
+        return {
+          "head":parts.at(0).trim(),
+          "body":parts.slice(1,-1).join('').trim(),
+          "tail":parts.at(-1)
         }
-        // 
-    }, [output])
-    return {isCpy8}
+      }))
+    })
+  }, [output])
+  return { isCpy8, title, sessions }
 }
