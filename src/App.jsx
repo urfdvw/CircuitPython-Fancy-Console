@@ -52,6 +52,13 @@ import connected_variables_py from "../CIRCUITPY/connected_variables.txt";
 
 const App = () => {
   // Hooks --------------------------------------
+  const [config, setConfig] = React.useState({
+    "fancy_console" : {
+      "show_cv": false,
+      "latest_block_only": false,
+      "windowed": false,
+    }
+  });
   // serial related
   const { connect, disconnect, sendData, output, connected } = useSerial();
   const [input, setInput] = useState("");
@@ -101,6 +108,7 @@ const App = () => {
   // UI related
 
   const [tabValue, setTabValue] = React.useState(0);
+
 
   // fancy console split
   const output2BlockText = () => {
