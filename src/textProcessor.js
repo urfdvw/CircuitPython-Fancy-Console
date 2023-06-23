@@ -1,4 +1,3 @@
-import { Margin } from "@mui/icons-material";
 import * as constants from "./constants"
 
 export function globStringToRegex(str) {
@@ -22,7 +21,7 @@ function preg_quote(str, delimiter) {
 }
 
 export function matchesInBetween(text, start, end) {
-    if (text == null) {
+    if (!text) {
         return [];
     }
     text = text.split(end).join(end + ' \n '); // to break 2 possible results in different lines
@@ -34,17 +33,30 @@ export function matchesInBetween(text, start, end) {
     return matches.map(x => x.slice(start.length, -end.length)); // remove the markers
 }
 
+export const removeInBetween = (text, start, end) => {
+    if (!text) {
+        return ""
+    }
+    // to break 2 possible results in different lines
+    const separater = constants.RARE + '\n' + constants.RARE
+    text = text.split(end).join(end + separater);
+    // get regex
+    const re = globStringToRegex(start + '*' + end)
+    // remove match
+    text = text.split(re).join('')
+    // remove separater
+    text = text.split(separater).join('') 
+    // process partial match
+    text = text.split(end).at(-1).split(start).at(0)
+    return text
+}
+
+// --- functions below should be some where else
 
 export const latestTitle = (text) => {
     // migrated to useSerialReceiveProcessor
     const matches = matchesInBetween(text, constants.TITLE_START, constants.TITLE_END);
     return matches.at(-1);
-}
-
-
-export const removeInBetween = (text, start, end) => {
-    const re = globStringToRegex(start + '*' + end)
-    return text.split(re).join('')
 }
 
 export const aggregateConnectedVariable = (text) => {
