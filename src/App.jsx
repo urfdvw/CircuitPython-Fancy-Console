@@ -61,11 +61,12 @@ const App = () => {
   });
   // serial related
   const { connect, disconnect, sendData, output, connected } = useSerial();
+  useEffect(() => {console.log([output])}, [output])
   const [input, setInput] = useState("");
   const [connectedVariables, setConnectedVariables] = useState({});
   const [rawSerialData, setRawSerialData] = useState(false);
   // Fancy Console
-  const { isCpy8, title, sessions } = useSerialReceiveProcessor(output);
+  // const { isCpy8, title, sessions } = useSerialReceiveProcessor(output);
   // widget related
   useEffect(() => {
     setConnectedVariables(aggregateConnectedVariable(output));

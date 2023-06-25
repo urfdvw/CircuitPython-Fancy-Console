@@ -6,3 +6,4 @@ export const LINE_END = '\x0D';
 export const CV_JSON_START = '<CV>'; // ConnectedVariableJson start
 export const CV_JSON_END = '</CV>';
 export const RARE = '\x1F';
+export const SEPARATER = RARE + '\n' + RARE

@@ -20,12 +20,12 @@ function preg_quote(str, delimiter) {
     return (str + '').replace(new RegExp('[.\\\\+*?\\[\\^\\]$(){}=!<>|:\\' + (delimiter || '') + '-]', 'g'), '\\$&');
 }
 
-export function matchesInBetween(text, start, end) {
+export function matchesInBetween(text, start, end, middle = '*') {
     if (!text) {
         return [];
     }
     text = text.split(end).join(end + ' \n '); // to break 2 possible results in different lines
-    const re = globStringToRegex(start + '*' + end);
+    const re = globStringToRegex(start + middle + end);
     let matches = text.match(re);
     if (matches === null) { // the line above will return null if no matches (so strange)
         matches = [];
@@ -33,22 +33,24 @@ export function matchesInBetween(text, start, end) {
     return matches.map(x => x.slice(start.length, -end.length)); // remove the markers
 }
 
-export const removeInBetween = (text, start, end) => {
+export const splitByInBetween = (text, start, end, middle = '*') => {
     if (!text) {
-        return ""
+        return [];
     }
     // to break 2 possible results in different lines
-    const separater = constants.RARE + '\n' + constants.RARE
-    text = text.split(end).join(end + separater);
+    text = text.split(end).join(end + constants.SEPARATER);
     // get regex
-    const re = globStringToRegex(start + '*' + end)
+    const re = globStringToRegex(start + middle + end)
     // remove match
     text = text.split(re).join('')
-    // remove separater
-    text = text.split(separater).join('') 
     // process partial match
-    text = text.split(end).at(-1).split(start).at(0)
-    return text
+    text = text.split(end + constants.SEPARATER).at(-1).split(start).at(0)
+    // remove constants.SEPARATER
+    return text.split(constants.SEPARATER)
+}
+
+export const removeInBetween = (text, start, end) => {
+    return splitByInBetween(text, start, end).join('')
 }
 
 // --- functions below should be some where else
