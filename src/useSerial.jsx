@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import * as constants from "../src/constants";
 
 const useSerial = () => {
   const [port, setPort] = useState(null);
@@ -74,6 +75,24 @@ const useSerial = () => {
       writer.releaseLock();
     }
   };
+
+  useEffect(() => {
+    /**
+     * This effect has two benefits
+     * * There will not be any "half blocks" when staring the IDE
+     * * Behaviour of CPY each time when IDE starts are consistent
+     * Please ignore whatever is before the first `soft reboot` text
+     */
+    async function clean_start() {
+      if (connected) {
+        // break any current run (no effect/harm in repl)
+        await sendData(constants.CTRL_C);
+        // start a fresh run (No matter from REPL or code)
+        await sendData(constants.CTRL_D);
+      }
+    }
+    clean_start();
+  }, [connected])
 
   const disconnect = async () => {
     if (!port) return;

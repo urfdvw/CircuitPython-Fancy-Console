@@ -7,3 +7,4 @@ export const CV_JSON_START = '<CV>'; // ConnectedVariableJson start
 export const CV_JSON_END = '</CV>';
 export const RARE = '\x1F';
 export const SEPARATER = RARE + '\n' + RARE
+export const SOFT_REBOOT = 'soft reboot'

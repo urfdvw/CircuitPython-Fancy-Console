@@ -23,10 +23,11 @@ export const output_to_blocks = (output) => {
     return []
   }
 
-  // Special case: when starting from REPL, `>>>` is postponed, so add it manually until there is input
-  if (! removeInBetween(output, constants.TITLE_START, constants.TITLE_END)) {
-    output += '>>>'
+  // wait for the first soft reboot and remove anything before that
+  if (! output.includes(constants.SOFT_REBOOT)){
+    return []
   }
+  output = output.split(constants.SOFT_REBOOT).slice(1).join(constants.SOFT_REBOOT).trimStart();
 
   // change line ending
   const unix_line_ending = output.split('\r').join('');
@@ -49,8 +50,11 @@ export const output_to_blocks = (output) => {
   // split contents with blocks
   let text_blocks = [];
   for (const sec of splitted_by_ends) {
+    // get first title and mark repl
+    const titles = matchesInBetween(sec, constants.TITLE_START, constants.TITLE_END)
+    const is_repl = titles ? titles[0].includes('REPL') : false;
+    // split body and info
     const parts = splitByInBetween(sec, constants.TITLE_START, constants.TITLE_END)
-    // titles will not have any usage beneath this line
     let info = "";
     let body = "";
     if (parts.length > 0) {
@@ -59,27 +63,31 @@ export const output_to_blocks = (output) => {
     }
     text_blocks.push({
       "info": info,
-      "body": body
+      "body": body,
+      "is_repl": is_repl,
     })
-  }
+  } // titles will not have any usage beneath this line
 
   // shift info and result by 1
   let re_orged_text_blocks = [];
   if (text_blocks.at(0).info.length > 0) {
     re_orged_text_blocks.push({
       "body": "",
+      "is_repl": false,
       "info": text_blocks.at(0).info
     })
   }
   for (let i = 0; i < text_blocks.length - 1; i++) {
     re_orged_text_blocks.push({
       "body": text_blocks[i].body,
+      "is_repl": text_blocks[i].is_repl,
       "info": text_blocks[i + 1].info
     })
   }
   if (text_blocks.at(-1).body.length > 0) {
     re_orged_text_blocks.push({
       "body": text_blocks.at(-1).body,
+      "is_repl": text_blocks.at(-1).is_repl,
       "info": ""
     })
   }
