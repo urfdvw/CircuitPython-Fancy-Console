@@ -26,7 +26,7 @@ import {
   aggregateConnectedVariable,
   globStringToRegex,
 } from "./textProcessor";
-import { useSerialReceiveProcessor } from "./useSerialReceiveProcessor";
+import { FancyConsole } from "./FancyConsole";
 import * as constants from "./constants";
 // My widgets
 import {
@@ -61,7 +61,6 @@ const App = () => {
   });
   // serial related
   const { connect, disconnect, sendData, output, connected } = useSerial();
-  useEffect(() => {console.log([output])}, [output])
   const [input, setInput] = useState("");
   const [connectedVariables, setConnectedVariables] = useState({});
   const [rawSerialData, setRawSerialData] = useState(false);
@@ -441,18 +440,7 @@ const App = () => {
         {widgets.map(json2Widget)}
       </TabPanel>
       <TabPanel value={tabValue} index={2}>
-        {output2BlockText().map(block => {
-          return <>
-            <pre style={{ whiteSpace: "pre-wrap" }}>
-              {block[0]}
-            </pre>
-            <Box sx={widgetStyles}>
-              <pre style={{ whiteSpace: "pre-wrap" }}>
-                {block[1]}
-              </pre>
-            </Box>
-          </>
-        })}
+        <FancyConsole output={output}></FancyConsole>
       </TabPanel>
     </Box>
   );
