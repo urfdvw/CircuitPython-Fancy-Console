@@ -104,19 +104,15 @@ export const useSerialReceiveProcessor = (output) => {
   const [title, setTitle] = useState("");
 
   useEffect(() => {
-    console.log([output])
     // set version
     if (output.includes(constants.TITLE_END)) {
       setIsCpy8(true);
-    }
-
-    // related functions only support CPY8+
-    if (!isCpy8) {
+    } else {
       return
     }
 
+    // code below only support CPY8+
     setSessions(output_to_sessions(output))
-    console.log(sessions)
   }, [output])
 
   return { isCpy8, title, sessions }
