@@ -52,7 +52,7 @@ export const output_to_blocks = (output) => {
   for (const sec of splitted_by_ends) {
     // get first title and mark repl
     const titles = matchesInBetween(sec, constants.TITLE_START, constants.TITLE_END)
-    const is_repl = titles ? titles[0].includes('REPL') : false;
+    const is_repl = titles.length ? titles[0].includes('REPL') : false;
     // split body and info
     const parts = splitByInBetween(sec, constants.TITLE_START, constants.TITLE_END)
     let info = "";
