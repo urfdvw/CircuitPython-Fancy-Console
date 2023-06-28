@@ -95,6 +95,30 @@ export const output_to_sessions = (output) => {
   return re_orged_text_sessions
 }
 
+export const format_exec = (code) => {
+  // reformat multiple lines of code in serial output
+  // TODO: This function can be used in Raw Console and Fancy Console
+}
+
+export const body_text_to_repl_conversation = (body) => {
+  if (!body) {
+    return []
+  }
+  const split_by_arrows = body.split('>>>').map(x => x.trim())
+  const info = split_by_arrows[0];
+  const conversation = split_by_arrows.slice(1).map(session => {
+    const code = session.split('\n').at(0);
+    if (code.includes('exec("""')) {
+      code = matchesInBetween(code, 'exec("""', '""")')[0].split('\\n').join('\n')
+    }
+    const results = session.split('\n').slice(1).join('\n');
+    return {
+      "code": code,
+      "results": results
+    }
+  })
+}
+
 export const useSerialReceiveProcessor = (output) => {
   /**
    * Break serial inputs into structural texts
