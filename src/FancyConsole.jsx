@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from "react";
 import Box from "@mui/material/Box";
 import { useSerialReceiveProcessor, body_text_to_repl_conversation } from "./useSerialReceiveProcessor"
-import SyntaxHighlighter from 'react-syntax-highlighter';
-import { stackoverflowDark, stackoverflowLight } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 
+import AceEditor from "react-ace";
+import "ace-builds/src-noconflict/mode-python";
+import "ace-builds/src-noconflict/theme-tomorrow";
+import "ace-builds/src-noconflict/theme-tomorrow_night";
+import "ace-builds/src-noconflict/ext-language_tools";
 
 const widgetStyles = {
     bgcolor: "background.paper",
@@ -32,18 +35,29 @@ export const Repl = ({ body }) => {
             repl_conversation.conversation.map(block => {
                 return <>
                     {block.code ? <Box sx={widgetStyles}>
-                        {/* <pre style={{ whiteSpace: "pre-wrap" }}>
-                            {block.code}
-                        </pre> */}
-                        <SyntaxHighlighter language="python" style={stackoverflowLight}>
-                            {block.code}
-                        </SyntaxHighlighter>
+                        <AceEditor
+                            mode="python"
+                            theme="tomorrow"
+                            maxLines="100"
+                            value={block.code}
+                        />
                     </Box> : <></>}
                     {block.results ? <pre style={{ whiteSpace: "pre-wrap" }}>
                         {block.results}
                     </pre> : <></>}
                 </>
             })
+        }
+        {
+            repl_conversation.waiting4code
+            ?<Box sx={widgetStyles}>
+                <AceEditor
+                    mode="python"
+                    theme="tomorrow"
+                    maxLines="100"
+                />
+            </Box>
+            : <></>
         }
         </>
     )
