@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from "react";
 import Box from "@mui/material/Box";
 import { useSerialReceiveProcessor, body_text_to_repl_conversation } from "./useSerialReceiveProcessor"
+import SyntaxHighlighter from 'react-syntax-highlighter';
+import { stackoverflowDark, stackoverflowLight } from 'react-syntax-highlighter/dist/esm/styles/hljs';
+
 
 const widgetStyles = {
     bgcolor: "background.paper",
@@ -29,9 +32,12 @@ export const Repl = ({ body }) => {
             repl_conversation.conversation.map(block => {
                 return <>
                     {block.code ? <Box sx={widgetStyles}>
-                        <pre style={{ whiteSpace: "pre-wrap" }}>
+                        {/* <pre style={{ whiteSpace: "pre-wrap" }}>
                             {block.code}
-                        </pre>
+                        </pre> */}
+                        <SyntaxHighlighter language="python" style={stackoverflowLight}>
+                            {block.code}
+                        </SyntaxHighlighter>
                     </Box> : <></>}
                     {block.results ? <pre style={{ whiteSpace: "pre-wrap" }}>
                         {block.results}
