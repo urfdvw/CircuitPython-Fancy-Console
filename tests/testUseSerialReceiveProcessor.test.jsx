@@ -14,6 +14,48 @@ describe('test repl breaking', () => {
             repl_scenarios['empty'].out
         )
     });
+    it("null", () => {
+        expect(
+            body_text_to_repl_conversation(repl_scenarios['null'].in)
+        ).toStrictEqual(
+            repl_scenarios['null'].out
+        )
+    });
+    it("just_started", () => {
+        expect(
+            body_text_to_repl_conversation(repl_scenarios['just_started'].in)
+        ).toStrictEqual(
+            repl_scenarios['just_started'].out
+        )
+    });
+    it("regular_runs", () => {
+        expect(
+            body_text_to_repl_conversation(repl_scenarios['regular_runs'].in)
+        ).toStrictEqual(
+            repl_scenarios['regular_runs'].out
+        )
+    });
+    it("exec_run", () => {
+        expect(
+            body_text_to_repl_conversation(repl_scenarios['exec_run'].in)
+        ).toStrictEqual(
+            repl_scenarios['exec_run'].out
+        )
+    });
+    it("runing_not_done", () => {
+        expect(
+            body_text_to_repl_conversation(repl_scenarios['runing_not_done'].in)
+        ).toStrictEqual(
+            repl_scenarios['runing_not_done'].out
+        )
+    });
+    it("with_break", () => {
+        expect(
+            body_text_to_repl_conversation(repl_scenarios['with_break'].in)
+        ).toStrictEqual(
+            repl_scenarios['with_break'].out
+        )
+    });
 });
 
 describe('test session breaking', () => {

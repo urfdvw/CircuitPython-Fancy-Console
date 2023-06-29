@@ -1,16 +1,80 @@
 export const repl_scenarios = {
     "empty": {
         "in": "",
-        "out": []
+        "out": null
     },
     "null": {
         "in": null,
-        "out": []
+        "out": null
     },
+    "just_started": {
+        "in": "Adafruit CircuitPython 8.0.5 on 2023-03-31; Adafruit Feather ESP32S2 with ESP32S2\n>>>",
+        "out": {
+            "info": "Adafruit CircuitPython 8.0.5 on 2023-03-31; Adafruit Feather ESP32S2 with ESP32S2",
+            "conversation": [],
+            "waiting4code": true,
+        }
+    },
+    "regular_runs": {
+        "in": "Adafruit CircuitPython 8.0.5 on 2023-03-31; Adafruit Feather ESP32S2 with ESP32S2\n>>> a = 1\n>>> a\n1\n>>>",
+        "out": {
+            "info": "Adafruit CircuitPython 8.0.5 on 2023-03-31; Adafruit Feather ESP32S2 with ESP32S2",
+            "conversation": [
+                {
+                    "code": "a = 1",
+                    "results": "",
+                },
+                {
+                    "code": "a",
+                    "results": "1",
+                },
+            ],
+            "waiting4code": true,
+        }
+    },
+    "exec_run": {
+        "in": "Adafruit CircuitPython 8.0.5 on 2023-03-31; Adafruit Feather ESP32S2 with ESP32S2\n>>> exec(\"\"\"for i in range(3):\\n    print(i)\"\"\")\n0\n1\n2\n>>> \n>>>",
+        "out": {
+            "info": "Adafruit CircuitPython 8.0.5 on 2023-03-31; Adafruit Feather ESP32S2 with ESP32S2",
+            "conversation": [
+                {
+                    "code": "for i in range(3):\n    print(i)",
+                    "results": "0\n1\n2"
+                },
+            ],
+            "waiting4code": true,
+        }
+    },
+    "runing_not_done": {
+        "in": "Adafruit CircuitPython 8.0.5 on 2023-03-31; Adafruit Feather ESP32S2 with ESP32S2\n>>> input('wait')\nwait",
+        "out": {
+            "info": "Adafruit CircuitPython 8.0.5 on 2023-03-31; Adafruit Feather ESP32S2 with ESP32S2",
+            "conversation": [
+                {
+                    "code": "input('wait')",
+                    "results": "wait"
+                },
+            ],
+            "waiting4code": false,
+        }
+    },
+    "with_break": {
+        "in": "Adafruit CircuitPython 8.0.5 on 2023-03-31; Adafruit Feather ESP32S2 with ESP32S2\n>>> exec(\"\"\"while 1:\\n  pass\"\"\")\nTraceback (most recent call last):\n  File \"<stdin>\", line 1, in <module>\n  File \"<string>\", line 2, in <module>\nKeyboardInterrupt: \n>>>",
+        "out": {
+            "info": "Adafruit CircuitPython 8.0.5 on 2023-03-31; Adafruit Feather ESP32S2 with ESP32S2",
+            "conversation": [
+                {
+                    "code": "while 1:\n  pass",
+                    "results": "Traceback (most recent call last):\n  File \"<stdin>\", line 1, in <module>\n  File \"<string>\", line 2, in <module>\nKeyboardInterrupt:"
+                },
+            ],
+            "waiting4code": true,
+        }
+    }
 }
 
 export const output_scenarios = {
-    "empty":{
+    "empty": {
         "in": "",
         "out": []
     },

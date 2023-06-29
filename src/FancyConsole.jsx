@@ -14,7 +14,7 @@ const widgetStyles = {
 
 export const FancyConsole = ({ output }) => {
     const { isCpy8, title, sessions } = useSerialReceiveProcessor(output);
-    
+    useEffect(() => { console.log(sessions) }, [sessions])
     return (<>
         {sessions.map(block => {
             return <>

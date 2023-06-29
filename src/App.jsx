@@ -109,36 +109,6 @@ const App = () => {
 
   const [tabValue, setTabValue] = React.useState(0);
 
-
-  // fancy console split
-  const output2BlockText = () => {
-    const extra_eol = output.split(constants.TITLE_END).join(constants.TITLE_END + '\n')
-
-    const cv_removed = removeInBetween(
-      extra_eol,
-      constants.CV_JSON_START,
-      constants.CV_JSON_END
-    );
-
-    const end_unified = cv_removed.split('Done').join('@');
-
-    const splitted_by_ends = end_unified.split(globStringToRegex(
-      constants.TITLE_START + "*@*" + constants.TITLE_END
-    ));
-
-    let text_blocks = [];
-    for (const sec of splitted_by_ends) {
-      const parts = sec.split(globStringToRegex(
-        constants.TITLE_START + "*" + constants.TITLE_END
-      ));
-      const info = parts[0].trim();
-      const content = parts.slice(1).join('').trim();
-      text_blocks.push([info, content])
-    }
-
-    return text_blocks
-  }
-
   // UI elements --------------------------------------
   const obj2WidgetContent = (wid) => {
     if (wid.type === "VariableDisp") {

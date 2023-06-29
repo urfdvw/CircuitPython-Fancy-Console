@@ -19,12 +19,12 @@ import {
 
 export const output_to_sessions = (output) => {
   // empty input shortcut
-  if (! output) {
+  if (!output) {
     return []
   }
 
   // wait for the first soft reboot and remove anything before that
-  if (! output.includes(constants.SOFT_REBOOT)){
+  if (!output.includes(constants.SOFT_REBOOT)) {
     return []
   }
   output = output.split(constants.SOFT_REBOOT).slice(1).join(constants.SOFT_REBOOT).trimStart();
@@ -102,12 +102,13 @@ export const format_exec = (code) => {
 
 export const body_text_to_repl_conversation = (body) => {
   if (!body) {
-    return []
+    return null
   }
   const split_by_arrows = body.split('>>>').map(x => x.trim())
   const info = split_by_arrows[0];
+  const waiting4code = body.endsWith('>>>');
   const conversation = split_by_arrows.slice(1).map(session => {
-    const code = session.split('\n').at(0);
+    let code = session.split('\n').at(0);
     if (code.includes('exec("""')) {
       code = matchesInBetween(code, 'exec("""', '""")')[0].split('\\n').join('\n')
     }
@@ -116,7 +117,14 @@ export const body_text_to_repl_conversation = (body) => {
       "code": code,
       "results": results
     }
-  })
+  }).filter(session =>
+    !(session.code.length == 0 && session.results.length == 0)
+  )
+  return {
+    "info": info,
+    "conversation": conversation,
+    "waiting4code": waiting4code,
+  }
 }
 
 export const useSerialReceiveProcessor = (output) => {
