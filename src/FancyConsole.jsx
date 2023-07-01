@@ -28,8 +28,8 @@ const CodeBlock = ({ code }) => {
     return <AceEditor
         mode="python"
         theme="tomorrow"
-        maxLines="100"
-        readOnly="true"
+        maxLines={20}
+        readOnly={true}     
         value={code}
         style={{
             marginBottom: "10px",
@@ -42,7 +42,7 @@ const CodeInput = () => {
         <AceEditor
             mode="python"
             theme="tomorrow"
-            maxLines="100"
+            maxLines={20}
         />
     </Box>
 }
