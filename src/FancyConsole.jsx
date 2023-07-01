@@ -18,47 +18,61 @@ const widgetStyles = {
     minHeight: "40px", // for the size of delet icon
 };
 
+const TextBlock = ({ info }) => {
+    return <pre style={{ whiteSpace: "pre-wrap" }}>
+        {info}
+    </pre>
+}
+
+const CodeBlock = ({ code }) => {
+    return <AceEditor
+        mode="python"
+        theme="tomorrow"
+        maxLines="100"
+        readOnly="true"
+        value={code}
+        style={{
+            marginBottom: "10px",
+        }}
+    />
+}
+
+const CodeInput = () => {
+    return <Box sx={widgetStyles}>
+        <AceEditor
+            mode="python"
+            theme="tomorrow"
+            maxLines="100"
+        />
+    </Box>
+}
+
 export const Repl = ({ body }) => {
     if (!body) {
         return <></>
     }
     const repl_conversation = body_text_to_repl_conversation(body);
-    console.log(repl_conversation)
+    // console.log(repl_conversation)
     return (
         <>
-        {
-            <pre style={{ whiteSpace: "pre-wrap" }}>
-                {repl_conversation.info}
-            </pre>
-        }
-        {
-            repl_conversation.conversation.map(block => {
-                return <>
-                    {block.code ? <Box sx={widgetStyles}>
-                        <AceEditor
-                            mode="python"
-                            theme="tomorrow"
-                            maxLines="100"
-                            value={block.code}
-                        />
-                    </Box> : <></>}
-                    {block.results ? <pre style={{ whiteSpace: "pre-wrap" }}>
-                        {block.results}
-                    </pre> : <></>}
-                </>
-            })
-        }
-        {
-            repl_conversation.waiting4code
-            ?<Box sx={widgetStyles}>
-                <AceEditor
-                    mode="python"
-                    theme="tomorrow"
-                    maxLines="100"
-                />
-            </Box>
-            : <></>
-        }
+            <TextBlock info={repl_conversation.info} />
+            {
+                repl_conversation.conversation.map(block => {
+                    return <>
+                        {block.code
+                            ? <CodeBlock code={block.code} />
+                            : <></>}
+                        {block.results
+                            ? <TextBlock info={block.results} />
+                            : <></>}
+                    </>
+                })
+            }
+            {
+                repl_conversation.waiting4code
+                    ? <CodeInput />
+                    : <></>
+            }
         </>
     )
 }
@@ -71,18 +85,15 @@ export const FancyConsole = ({ output }) => {
             return <>
                 {block.body ? <Box sx={widgetStyles}>
                     <p>{block.is_repl ? "REPL" : "Code"}</p>
-                    
-                        {
-                            block.is_repl
+                    {
+                        block.is_repl
                             ? <Repl body={block.body} />
-                            : <pre style={{ whiteSpace: "pre-wrap" }}>
-                                {block.body}
-                            </pre>
-                        }
+                            : <TextBlock info={block.body} />
+                    }
                 </Box> : <></>}
-                {block.info ? <pre style={{ whiteSpace: "pre-wrap" }}>
-                    {block.info}
-                </pre> : <></>}
+                {block.info
+                    ? <TextBlock info={block.info} />
+                    : <></>}
             </>
         })}
     </>)
