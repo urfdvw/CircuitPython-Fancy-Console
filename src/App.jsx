@@ -5,10 +5,8 @@ import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import Switch from "@mui/material/Switch";
-import Grid from "@mui/material/Grid";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ArrowOutwardIcon from "@mui/icons-material/ArrowOutward";
-import Divider from '@mui/material/Divider';
 import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
 import Tabs from "@mui/material/Tabs";
@@ -53,7 +51,7 @@ import connected_variables_py from "../CIRCUITPY/connected_variables.txt";
 const App = () => {
   // Hooks --------------------------------------
   const [config, setConfig] = React.useState({
-    "fancy_console" : {
+    "fancy_console": {
       "show_cv": false,
       "latest_block_only": false,
       "windowed": false,
@@ -70,35 +68,7 @@ const App = () => {
   useEffect(() => {
     setConnectedVariables(aggregateConnectedVariable(output));
   }, [output]);
-  const [widgets, setWidgets] = useState([
-    // // examples
-    // {
-    //   key: "sdkfjwdkjfhsadkjfh",
-    //   type: "VariableDisp",
-    //   variableName: "a",
-    //   displayName: "Value of `a` in CircuitPython",
-    //   windowed: false,
-    // },
-    // {
-    //   key: "fkjvhgifvbhgsjd",
-    //   type: "VariableSet",
-    //   windowed: false,
-    // },
-    // {
-    //   key: "sdfgsdfgsdfg3rsdav",
-    //   type: "VariableSetBoolButton",
-    //   variableName: "e",
-    //   displayName: "set e",
-    //   windowed: false,
-    // },
-    // {
-    //   key: "sadfjkhsdgiofu",
-    //   type: "VariableSetColor",
-    //   variableName: "c",
-    //   displayName: "set c",
-    //   windowed: false,
-    // },
-  ]);
+  const [widgets, setWidgets] = useState([]);
   const [widgetCreateDiag, setWidgetCreateDiag] = React.useState(<></>); // which create widget modal is showing
 
   // file related
