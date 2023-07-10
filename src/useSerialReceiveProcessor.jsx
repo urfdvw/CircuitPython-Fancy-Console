@@ -96,7 +96,7 @@ export const output_to_sessions = (output) => {
 }
 
 export const format_exec = (code) => {
-  // reformat multiple lines of code in serial output
+  // reformat multiple `1235.` of code in serial output
   // TODO: This function can be used in Raw Console and Fancy Console
 }
 
@@ -127,6 +127,15 @@ export const body_text_to_repl_conversation = (body) => {
   }
 }
 
+const latestTitle = (output) => {
+  // migrated to useSerialReceiveProcessor
+  const matches = matchesInBetween(text, constants.TITLE_START, constants.TITLE_END);
+  return matches.at(-1);
+}
+
+const getHistory = (sessions) => {
+}
+
 export const useSerialReceiveProcessor = (output) => {
   /**
    * Break serial inputs into structural texts
@@ -134,6 +143,7 @@ export const useSerialReceiveProcessor = (output) => {
   const [isCpy8, setIsCpy8] = useState(false);
   const [sessions, setSessions] = useState([]);
   const [title, setTitle] = useState("");
+  const [history, setHistory] = useState(["help('modules') # list build-in modules"]);
 
   useEffect(() => {
     // set version
@@ -145,7 +155,12 @@ export const useSerialReceiveProcessor = (output) => {
 
     // code below only support CPY8+
     setSessions(output_to_sessions(output))
+    setTitle(latestTitle(output))
   }, [output])
 
-  return { isCpy8, title, sessions }
+  useEffect (() => {
+    setHistory(getHistory(sessions))
+  }, [sessions])
+
+  return { isCpy8, title, sessions, history }
 }

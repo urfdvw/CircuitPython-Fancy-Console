@@ -51,7 +51,7 @@ export const Repl = ({ body }) => {
     if (!body) {
         return <></>
     }
-    const repl_conversation = body_text_to_repl_conversation(body);
+    const repl_conversation = body_text_to_repl_conversation(body); // this function should not be called here
     // console.log(repl_conversation)
     return (
         <>
