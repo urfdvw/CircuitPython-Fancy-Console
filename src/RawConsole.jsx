@@ -5,9 +5,7 @@ import Box from "@mui/material/Box";
 // Other packages
 import ScrollableFeed from "react-scrollable-feed"; // https://stackoverflow.com/a/52673227/7037749
 // Mine
-import {
-    removeInBetween,
-} from "./textProcessor";
+import { removeInBetween } from "./textProcessor";
 import * as constants from "./constants";
 
 const rawSerialBoxStyles = {
@@ -26,7 +24,7 @@ const RawConsole = ({ output, config }) => {
             output,
             constants.TITLE_START,
             constants.TITLE_END
-        )
+        );
     }
 
     if (config.raw_console.hide_cv) {
@@ -34,16 +32,16 @@ const RawConsole = ({ output, config }) => {
             output,
             constants.CV_JSON_START,
             constants.CV_JSON_END
-        )
+        );
     }
 
-    return <Box sx={rawSerialBoxStyles}>
-        <ScrollableFeed>
-            <pre style={{ whiteSpace: "pre-wrap" }}>
-                {output}
-            </pre>
-        </ScrollableFeed>
-    </Box>
-}
+    return (
+        <Box sx={rawSerialBoxStyles}>
+            <ScrollableFeed>
+                <pre style={{ whiteSpace: "pre-wrap" }}>{output}</pre>
+            </ScrollableFeed>
+        </Box>
+    );
+};
 
 export default RawConsole;

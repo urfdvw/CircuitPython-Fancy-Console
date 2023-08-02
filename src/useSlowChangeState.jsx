@@ -2,18 +2,18 @@ import { useState, useEffect } from "react";
 
 const useSlowChangeState = (inState, interval) => {
     const [lastTime, setLastTime] = useState(new Date());
-    const [outState, setOutState] = useState(inState)
-    
+    const [outState, setOutState] = useState(inState);
+
     useEffect(() => {
         const curTime = new Date();
-        const timeDiff = (curTime - lastTime) / 1000
+        const timeDiff = (curTime - lastTime) / 1000;
         if (timeDiff > interval) {
             setOutState(inState);
             setLastTime(curTime);
         }
     }, [inState]);
 
-    return outState
-}
+    return outState;
+};
 
 export default useSlowChangeState;

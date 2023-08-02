@@ -1,20 +1,16 @@
-
 import React, { useState } from "react";
-import Autocomplete from '@mui/material/Autocomplete';
+import Autocomplete from "@mui/material/Autocomplete";
 import FormControl from "@mui/material/FormControl";
 import TextField from "@mui/material/TextField";
 import InputLabel from "@mui/material/InputLabel";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import Button from "@mui/material/Button";
-import Grid from '@mui/material/Grid';
+import Grid from "@mui/material/Grid";
 import * as constants from "./constants";
 
-const VariableSet = ({
-    connectedVariables,
-    sendData,
-}) => {
-    const [variableName, setVariableName] = useState('');
+const VariableSet = ({ connectedVariables, sendData }) => {
+    const [variableName, setVariableName] = useState("");
     const [value, setValue] = useState("0");
     const [type, setType] = useState("int");
 
@@ -28,20 +24,21 @@ const VariableSet = ({
         } else if (type === "string") {
             variableValue = String(value);
         } else if (type === "bool") {
-            variableValue = value.trim().toLowerCase() === 'true' ? true : false;
+            variableValue =
+                value.trim().toLowerCase() === "true" ? true : false;
         } else if (type === "json") {
             try {
                 variableValue = JSON.parse(value);
             } catch {
-                alert('Input is not a valid json');
+                alert("Input is not a valid json");
             }
         }
         const updatedVariable = { [variableName]: variableValue }; //https://stackoverflow.com/a/29077216/7037749
         sendData(
             constants.CV_JSON_START +
-            JSON.stringify(updatedVariable) +
-            constants.CV_JSON_END +
-            constants.LINE_END
+                JSON.stringify(updatedVariable) +
+                constants.CV_JSON_END +
+                constants.LINE_END
         );
         // don't up date variable value on web directly, let the change reflected by update echo
     };
@@ -53,7 +50,7 @@ const VariableSet = ({
                     <Autocomplete
                         isOptionEqualToValue={(option, value) => {
                             // return option.label === value
-                            return true
+                            return true;
                         }}
                         disableClearable
                         id="combo-box-demo"
@@ -61,17 +58,16 @@ const VariableSet = ({
                         onChange={(e, newValue) => {
                             setVariableName(newValue.label);
                         }}
-                        options={
-                            Object.keys(connectedVariables).map(key => {
-                                return {
-                                    label: key
-                                }
-                            })
-                        }
+                        options={Object.keys(connectedVariables).map((key) => {
+                            return {
+                                label: key,
+                            };
+                        })}
                         sx={{ width: 100 }}
-                        renderInput={(params) => <TextField {...params} label="Variable" />}
+                        renderInput={(params) => (
+                            <TextField {...params} label="Variable" />
+                        )}
                     />
-
                 </Grid>
                 <Grid item xs={4}>
                     <TextField
@@ -81,11 +77,12 @@ const VariableSet = ({
                         }}
                         label="value"
                     ></TextField>
-
                 </Grid>
                 <Grid item xs={3}>
                     <FormControl fullWidth>
-                        <InputLabel id="demo-simple-select-label">type</InputLabel>
+                        <InputLabel id="demo-simple-select-label">
+                            type
+                        </InputLabel>
                         <Select
                             labelId="demo-simple-select-label"
                             value={type}
@@ -101,13 +98,13 @@ const VariableSet = ({
                             <MenuItem value={"json"}>json</MenuItem>
                         </Select>
                     </FormControl>
-
                 </Grid>
                 <Grid item xs={2}>
                     <Button
                         size="large"
                         variant="contained"
-                        onClick={handleSubmit}>
+                        onClick={handleSubmit}
+                    >
                         Set
                     </Button>
                 </Grid>
@@ -115,4 +112,4 @@ const VariableSet = ({
         </>
     );
 };
-export default VariableSet
+export default VariableSet;

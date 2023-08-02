@@ -14,7 +14,7 @@ const supportedWidgets = [
     { name: "VariableSetBoolButton", lable: "Button" },
     { name: "VariableSetColor", lable: "Color Picker" },
     { name: "VariableSet", lable: "Variable Set" },
-]
+];
 
 export function CreateWidgetMenu({ handleClick }) {
     const [anchorEl, setAnchorEl] = React.useState(null);
@@ -44,25 +44,32 @@ export function CreateWidgetMenu({ handleClick }) {
                 open={open}
                 onClose={handleClose}
                 MenuListProps={{
-                    "aria-labelledby": "basic-button"
+                    "aria-labelledby": "basic-button",
                 }}
             >
-                {supportedWidgets.map((wid) =>
+                {supportedWidgets.map((wid) => (
                     <MenuItem
                         key={wid.name}
                         onClick={() => {
                             handleClick(wid.name);
                             handleClose();
-                        }}>{wid.lable}
+                        }}
+                    >
+                        {wid.lable}
                     </MenuItem>
-                )}
+                ))}
             </Menu>
         </div>
     );
 }
 
-
-export const CreateWidgetDiag = ({ open, onClose, setWidgets, widgetObj, title }) => {
+export const CreateWidgetDiag = ({
+    open,
+    onClose,
+    setWidgets,
+    widgetObj,
+    title,
+}) => {
     const [variableName, setVariableName] = React.useState("");
     const [displayName, setDisplayName] = React.useState("");
 
@@ -71,8 +78,8 @@ export const CreateWidgetDiag = ({ open, onClose, setWidgets, widgetObj, title }
             <DialogTitle> {title} </DialogTitle>
             <DialogContent>
                 <DialogContentText>
-                    Please make sure there is a connected variable created in your
-                    microcontroller code.
+                    Please make sure there is a connected variable created in
+                    your microcontroller code.
                 </DialogContentText>
                 <TextField
                     autoFocus
@@ -106,16 +113,20 @@ export const CreateWidgetDiag = ({ open, onClose, setWidgets, widgetObj, title }
                     {" "}
                     Cancel{" "}
                 </Button>
-                <Button onClick={() => {
-                    setWidgets((cur) => {
-                        return [
-                            ...cur,
-                            // change the obj below
-                            widgetObj(variableName, displayName)
-                        ];
-                    });
-                    onClose();
-                }}>Create</Button>
+                <Button
+                    onClick={() => {
+                        setWidgets((cur) => {
+                            return [
+                                ...cur,
+                                // change the obj below
+                                widgetObj(variableName, displayName),
+                            ];
+                        });
+                        onClose();
+                    }}
+                >
+                    Create
+                </Button>
             </DialogActions>
         </Dialog>
     );
