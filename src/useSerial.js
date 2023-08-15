@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import * as constants from "../src/constants";
+import * as constants from "./constants";
 
 const useSerial = () => {
     const [port, setPort] = useState(null);
