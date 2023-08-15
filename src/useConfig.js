@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import log from "loglevel";
-log.setLevel("trace");
 
 const useConfig = () => {
     useEffect(() => {
