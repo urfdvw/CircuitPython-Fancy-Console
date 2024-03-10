@@ -283,7 +283,6 @@ const App = () => {
                 >
                     <Tab label="Serial Console" {...a11yProps(0)} />
                     <Tab label="Widgets" {...a11yProps(1)} />
-                    <Tab label="Fancy Console" {...a11yProps(2)} />
                 </Tabs>
             </Box>
             <TabPanel value={tabValue} index={0}>
@@ -385,9 +384,6 @@ const App = () => {
                 <CreateWidgetMenu handleClick={handleCreateWidgetMenu} />
                 {widgetCreateDiag}
                 {widgets.map(json2Widget)}
-            </TabPanel>
-            <TabPanel value={tabValue} index={2}>
-                <FancyConsole output={output}></FancyConsole>
             </TabPanel>
         </Box>
     );
